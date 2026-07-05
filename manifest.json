@@ -1,0 +1,12 @@
+{
+  "name": "RDCO Sample Tracker",
+  "short_name": "Sample Tracker",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F6FAF8",
+  "theme_color": "#00847D",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
