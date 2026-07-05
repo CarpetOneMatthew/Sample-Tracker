@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RDCO Sample Tracker</title>
+<meta name="theme-color" content="#EDF4FC">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   RDCO SAMPLE TRACKER — "Showroom" theme
+   Light, airy, white cards on a soft sky field. Status is shown
+   through a swatch language: every sample row carries a material
+   chip on its left edge, like the corner of a flooring sample.
+   Display face: Space Grotesk · Body: Instrument Sans
+   ================================================================ */
+:root{
+  --sky-hi:#E7F0FB; --sky-lo:#F5FAFE;
+  --paper:#FFFFFF;
+  --ink:#16243A; --ink2:#5C6E86; --ink3:#93A3B8;
+  --line:#E2EAF3; --line-h:#C7D6E8;
+  --cobalt:#2B5FE3; --cobalt-d:#2049B8; --cobalt-soft:#E9EFFC; --cobalt-line:#C6D5F6;
+  --moss:#178A63; --moss-soft:#E1F4EC;
+  --clay:#C13A3A; --clay-soft:#FBEBEA; --clay-line:#F0CBC9;
+  --amber:#A8720A; --amber-soft:#FCF2DD;
+  --radius:16px; --radius-sm:11px; --radius-lg:22px;
+  --shadow:0 1px 2px rgba(22,36,58,.05),0 8px 24px rgba(35,68,120,.08);
+  --shadow-md:0 2px 4px rgba(22,36,58,.06),0 16px 40px rgba(35,68,120,.13);
+  --shadow-lg:0 24px 70px rgba(24,48,92,.22);
+  --ease:cubic-bezier(.22,.61,.36,1); --spring:cubic-bezier(.16,1,.3,1);
+  --display:'Space Grotesk',sans-serif;
+  --body:'Instrument Sans',-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{min-height:100%}
+body{
+  color:var(--ink);font-family:var(--body);font-size:14.5px;line-height:1.5;
+  min-height:100vh;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  background:
+    radial-gradient(900px 560px at 85% -10%, rgba(96,150,240,.16), transparent 60%),
+    radial-gradient(760px 520px at -6% 108%, rgba(37,146,110,.08), transparent 55%),
+    linear-gradient(180deg,var(--sky-hi) 0%,var(--sky-lo) 46%,#EDF4FB 100%);
+  background-attachment:fixed;
+}
+h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.015em;color:var(--ink);line-height:1.18}
+a{color:var(--cobalt);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:2px}
+button{font-family:var(--body);cursor:pointer;border:none;border-radius:var(--radius-sm);font-weight:600;letter-spacing:-.005em;color:var(--ink);
+  transition:background .18s var(--ease),color .18s var(--ease),transform .14s var(--spring),box-shadow .2s var(--ease),border-color .18s var(--ease)}
+button:active{transform:scale(.97)}
+:focus-visible{outline:2.5px solid var(--cobalt);outline-offset:2px;border-radius:6px}
+input,select,textarea{
+  font-family:var(--body);font-size:15px;color:var(--ink);background:var(--paper);
+  border:1.5px solid var(--line);border-radius:10px;padding:10px 13px;width:100%;outline:none;
+  transition:border-color .18s var(--ease),box-shadow .18s var(--ease)}
+input::placeholder,textarea::placeholder{color:var(--ink3)}
+input:focus,select:focus,textarea:focus{border-color:var(--cobalt);box-shadow:0 0 0 3.5px rgba(43,95,227,.13)}
+label{display:block;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);margin:12px 0 5px}
+.icon{width:16px;height:16px;flex:none;vertical-align:-3px}
+.icon.lg{width:20px;height:20px}
+
+/* ------------------------------------------------------ header --- */
+.topbar{position:sticky;top:0;z-index:40;background:rgba(250,253,255,.78);
+  -webkit-backdrop-filter:saturate(160%) blur(16px);backdrop-filter:saturate(160%) blur(16px);
+  border-bottom:1px solid rgba(210,224,240,.7);padding:14px 24px 0}
+.brand{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand .mark{display:flex;align-items:center}
+.brand h1{font-size:22px;font-weight:700;letter-spacing:-.02em}
+.brand .sub{color:var(--ink2);font-size:12.5px;margin-left:2px}
+.nav{display:flex;gap:6px;margin-top:12px;padding-bottom:12px;align-items:center;flex-wrap:wrap}
+.nav .vbtn{background:transparent;color:var(--ink2);padding:8px 15px;font-size:14px;border-radius:999px;display:flex;gap:7px;align-items:center}
+.nav .vbtn:hover{background:rgba(43,95,227,.07);color:var(--ink)}
+.nav .vbtn.on{background:var(--cobalt);color:#fff;box-shadow:0 5px 14px rgba(43,95,227,.35)}
+.nav .vbtn .cnt{font-family:var(--display);font-size:11px;font-weight:700;background:rgba(255,255,255,.25);border-radius:999px;padding:1px 7px}
+.nav .vbtn:not(.on) .cnt{background:var(--clay-soft);color:var(--clay)}
+.nav .spacer{flex:1}
+.nav .ghost{background:var(--paper);color:var(--cobalt);border:1.5px solid var(--cobalt-line);padding:8px 15px;font-size:13.5px}
+.nav .ghost:hover{background:var(--cobalt-soft)}
+
+/* bottom tab bar — phones only */
+.tabbar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:45;
+  background:rgba(252,254,255,.92);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+.tabbar button{flex:1;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:7px 2px;font-size:10.5px;font-weight:600;color:var(--ink3);border-radius:12px;position:relative}
+.tabbar button.on{color:var(--cobalt)}
+.tabbar button .icon{width:21px;height:21px}
+.tabbar .dot{position:absolute;top:4px;right:calc(50% - 18px);min-width:16px;height:16px;border-radius:999px;
+  background:var(--clay);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+
+main{max-width:1080px;margin:0 auto;padding:24px 20px 80px;position:relative;z-index:1}
+main>section{animation:viewIn .4s var(--spring) both}
+.pagehead{margin-bottom:16px}
+.pagehead h2{font-size:22px}
+.pagehead p{color:var(--ink2);font-size:14px;margin-top:2px}
+
+/* -------------------------------------------------------- kpis --- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.kpi{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:16px 16px 14px;transition:transform .22s var(--spring),box-shadow .22s var(--ease)}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.kpi .n{font-family:var(--display);font-size:32px;font-weight:700;letter-spacing:-.02em;line-height:1}
+.kpi .t{font-size:12.5px;color:var(--ink2);font-weight:500;margin-top:6px}
+.kpi.alert{border-color:var(--clay-line);background:linear-gradient(180deg,#FFF,var(--clay-soft))}
+.kpi.alert .n{color:var(--clay)}
+
+/* ----------------------------------------------------- toolbar --- */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.toolbar .searchwrap{flex:2;min-width:190px;position:relative}
+.toolbar .searchwrap .icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink3)}
+.toolbar .searchwrap input{padding-left:36px}
+.toolbar select{flex:1;min-width:140px;width:auto}
+.btn{background:var(--cobalt);color:#fff;padding:11px 19px;font-size:14px;white-space:nowrap;
+  box-shadow:0 5px 14px rgba(43,95,227,.32);display:inline-flex;align-items:center;gap:7px}
+.btn:hover{background:var(--cobalt-d);transform:translateY(-1px);box-shadow:0 8px 20px rgba(43,95,227,.4)}
+.btn.sm{padding:8px 13px;font-size:13px;border-radius:9px}
+.btn.ghost{background:var(--paper);color:var(--cobalt);border:1.5px solid var(--cobalt-line);box-shadow:none}
+.btn.ghost:hover{background:var(--cobalt-soft);transform:translateY(-1px)}
+.btn.good{background:var(--moss);box-shadow:0 5px 14px rgba(23,138,99,.3)}
+.btn.good:hover{background:#116E4E}
+.btn.warn{background:var(--amber);box-shadow:0 5px 14px rgba(168,114,10,.28)}
+.btn.warn:hover{background:#8C5E06}
+.btn.bad{background:var(--clay);box-shadow:0 5px 14px rgba(193,58,58,.28)}
+.btn.bad:hover{background:#A32E2E}
+.btn.danger{background:var(--clay-soft);color:var(--clay);border:1.5px solid var(--clay-line);box-shadow:none}
+.btn.danger:hover{background:#F7DCDA;transform:translateY(-1px)}
+
+/* --------------------------------------------- sections + rows --- */
+.sect{margin-bottom:28px}
+.sect h2{font-size:17px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.sect h2 .count{font-family:var(--display);font-size:11.5px;font-weight:700;background:var(--cobalt-soft);color:var(--cobalt);border-radius:999px;padding:2px 9px}
+.sect h2 .count.hot{background:var(--clay-soft);color:var(--clay)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+
+/* sample row — the swatch tab on the left edge is the signature */
+.rowcard{position:relative;display:flex;gap:14px;align-items:center;background:var(--paper);
+  border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:13px 16px 13px 22px;margin-bottom:9px;flex-wrap:wrap;overflow:hidden;
+  transition:transform .2s var(--spring),box-shadow .2s var(--ease),border-color .2s var(--ease)}
+.rowcard:hover{transform:translateY(-1px);box-shadow:var(--shadow-md);border-color:var(--line-h)}
+.rowcard::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:6px;border-radius:0 6px 6px 0;background:var(--ink3)}
+.rowcard.s-Ordered::before{background:var(--cobalt)}
+.rowcard.s-Arrived::before{background:var(--moss)}
+.rowcard.s-Delivered::before{background:var(--line-h)}
+.rowcard.overdue{border-color:var(--clay-line);background:linear-gradient(180deg,#FFF, #FEF6F5)}
+.rowcard.overdue::before{background:var(--clay)}
+.rowcard .grow{flex:1;min-width:190px}
+.rowcard .title{font-weight:600;font-size:14.5px}
+.rowcard .title .sku{color:var(--ink3);font-weight:500;font-size:13px}
+.rowcard .meta{font-size:12.5px;color:var(--ink2);margin-top:2px}
+.pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.pill.Ordered{background:var(--cobalt-soft);color:var(--cobalt)}
+.pill.Arrived{background:var(--moss-soft);color:var(--moss)}
+.pill.Delivered{background:#EEF2F7;color:var(--ink2)}
+.pill.late{background:var(--clay-soft);color:var(--clay)}
+.pill.warn{background:var(--amber-soft);color:var(--amber)}
+.pill.neutral{background:#EEF2F7;color:var(--ink2)}
+.empty{background:rgba(255,255,255,.55);border:1.5px dashed var(--line-h);border-radius:var(--radius);
+  padding:28px;text-align:center;color:var(--ink2);font-size:14.5px}
+.empty b{color:var(--ink)}
+
+/* ------------------------------------------------ project grid --- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.pcard{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:17px;cursor:pointer;transition:transform .22s var(--spring),box-shadow .22s var(--ease),border-color .22s var(--ease)}
+.pcard:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--cobalt-line)}
+.pcard h3{font-size:16.5px;margin-bottom:2px}
+.pcard .meta{font-size:12.5px;color:var(--ink2);margin-bottom:10px}
+.thread{height:7px;background:#E9EFF7;border-radius:999px;overflow:hidden;margin:11px 0 6px}
+.thread i{display:block;height:100%;background:linear-gradient(90deg,var(--cobalt),#5E8BF2);border-radius:999px;transition:width .5s var(--spring)}
+.thread i.done{background:linear-gradient(90deg,var(--moss),#31B586)}
+.pcard .prog{font-size:12px;color:var(--ink2)}
+.chips{margin-top:6px;display:flex;gap:6px;flex-wrap:wrap}
+
+/* -------------------------------------------------- receive mode --- */
+.supgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:13px}
+.boxcard{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:17px 17px 15px;cursor:pointer;text-align:left;width:100%;
+  transition:transform .22s var(--spring),box-shadow .22s var(--ease),border-color .22s var(--ease)}
+.boxcard:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--cobalt-line)}
+.boxcard::after{content:"";position:absolute;top:0;left:16px;right:16px;height:0;border-top:2px dashed var(--line-h)}
+.boxcard .bhead{display:flex;align-items:center;gap:10px}
+.boxcard .bicon{width:38px;height:38px;border-radius:11px;background:var(--cobalt-soft);color:var(--cobalt);display:flex;align-items:center;justify-content:center;flex:none}
+.boxcard h3{font-size:16px;line-height:1.2}
+.boxcard .bmeta{font-size:12.5px;color:var(--ink2);margin-top:9px;display:flex;gap:6px;flex-wrap:wrap}
+.backlink{display:inline-flex;align-items:center;gap:6px;background:none;color:var(--ink2);font-size:14px;padding:6px 10px 6px 4px;margin-bottom:10px;border-radius:9px}
+.backlink:hover{background:rgba(43,95,227,.07);color:var(--ink)}
+.recvrow{gap:10px}
+.recvrow .btn{min-height:44px}
+.justnow{opacity:.72}
+
+/* ---------------------------------------------------- suppliers --- */
+.scard{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:17px;margin-bottom:12px;transition:box-shadow .2s var(--ease),border-color .2s var(--ease)}
+.scard:hover{box-shadow:var(--shadow-md);border-color:var(--line-h)}
+.scard .head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.scard h3{font-size:17px;flex:1;min-width:150px}
+.replist{margin-top:11px;border-top:1px solid var(--line);padding-top:9px}
+.reprow{display:flex;gap:10px;flex-wrap:wrap;font-size:13px;padding:6px 0;align-items:baseline}
+.reprow b{min-width:120px;font-weight:600}
+.reprow .pl{background:var(--moss-soft);color:var(--moss);border-radius:999px;padding:2px 9px;font-size:11px;font-weight:600}
+.kvs{display:flex;gap:16px;flex-wrap:wrap;margin-top:9px;font-size:13px;color:var(--ink2)}
+.kvs .icon{color:var(--ink3)}
+.copybtn{background:#EEF2F7;color:var(--ink2);border-radius:7px;padding:3px 8px;font-size:11px;font-weight:600}
+.copybtn:hover{background:var(--cobalt-soft);color:var(--cobalt)}
+
+/* -------------------------------------------------------- modal --- */
+.overlay{position:fixed;inset:0;background:rgba(22,36,58,.34);display:flex;align-items:flex-start;justify-content:center;
+  padding:38px 16px;overflow-y:auto;z-index:50;opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .3s var(--ease),visibility 0s linear .32s;
+  -webkit-backdrop-filter:blur(0);backdrop-filter:blur(0)}
+.overlay.open{opacity:1;visibility:visible;pointer-events:auto;
+  -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+  transition:opacity .28s var(--ease),backdrop-filter .35s var(--ease),-webkit-backdrop-filter .35s var(--ease),visibility 0s}
+.modal{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);max-width:760px;width:100%;
+  padding:26px;box-shadow:var(--shadow-lg);transform:translateY(26px) scale(.96);opacity:0;
+  transition:transform .4s var(--spring),opacity .3s var(--ease)}
+.overlay.open .modal{transform:none;opacity:1}
+.modal h2{font-size:21px}
+.modal .close{float:right;background:#EEF2F7;color:var(--ink2);width:34px;height:34px;font-size:15px;border-radius:999px}
+.modal .close:hover{background:var(--clay-soft);color:var(--clay)}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:0 16px}
+.linecard{background:#F8FAFD;border:1px solid var(--line);border-radius:13px;padding:12px 14px;margin-bottom:9px}
+.hint{background:var(--cobalt-soft);border:1px solid var(--cobalt-line);border-radius:12px;padding:10px 14px;font-size:12.5px;color:#2A4FB0;margin-top:10px}
+.hint b{color:var(--cobalt-d)}
+.acc-opts{display:grid;gap:10px;margin-top:16px}
+.acc-opts button{padding:15px;font-size:15px;border-radius:13px;min-height:50px;justify-content:center;display:flex;align-items:center;gap:9px}
+.subtle{font-size:12px;color:var(--ink3)}
+hr.soft{border:none;border-top:1px solid var(--line);margin:17px 0}
+
+/* --------------------------------------------- toast + loader --- */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(8px) scale(.97);
+  background:var(--ink);color:#fff;border-radius:999px;padding:11px 22px;font-size:13.5px;font-weight:500;
+  opacity:0;transition:opacity .3s var(--spring),transform .3s var(--spring);z-index:99;pointer-events:none;
+  box-shadow:0 14px 36px rgba(22,36,58,.35)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+#toast.err{background:var(--clay)}
+#loader{position:fixed;inset:0;background:linear-gradient(180deg,var(--sky-hi),var(--sky-lo));display:flex;flex-direction:column;gap:16px;align-items:center;justify-content:center;z-index:100}
+.spin{width:36px;height:36px;border:3px solid #D7E3F2;border-top-color:var(--cobalt);border-radius:50%;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@keyframes viewIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* -------------------------------------------------------- mobile --- */
+@media (max-width:720px){
+  .topbar{padding:12px 16px 12px}
+  .nav{display:none}
+  .tabbar{display:flex}
+  main{padding:18px 14px calc(96px + env(safe-area-inset-bottom))}
+  .kpis{grid-template-columns:1fr 1fr}
+  .kpi .n{font-size:27px}
+  .rowcard{padding:13px 14px 13px 20px}
+  .rowcard .btn.sm{min-height:44px;flex:1;justify-content:center}
+  .toolbar select{min-width:calc(50% - 5px)}
+  .overlay{padding:0;align-items:flex-end}
+  .modal{max-width:none;border-radius:20px 20px 0 0;max-height:92dvh;overflow-y:auto;padding:22px 18px calc(24px + env(safe-area-inset-bottom))}
+  .grid,.supgrid{grid-template-columns:1fr}
+  .pagehead h2{font-size:20px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .spin{animation:none}
+}
+</style>
+</head>
+<body>
+
+<!-- icon set (inline, no external images) -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1Z"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8.5 12 13 3 8.5M12 3l9 4.5v9L12 21l-9-4.5v-9L12 3Z"/><path d="M12 13v8"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 17V6H2v11h12Zm0-8h4l3 3v5h-7"/><circle cx="6.5" cy="17.5" r="2"/><circle cx="16.5" cy="17.5" r="2"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5"/><path d="M16 5a3.5 3.5 0 0 1 0 7M18 15.4c2 .7 3.1 2.2 3.5 4.6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12.5 5.5 5.5L20 6.5"/></symbol>
+  <symbol id="i-half" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17" /><path d="M12 3.5a8.5 8.5 0 0 1 0 17Z" fill="currentColor" stroke="none" opacity=".45"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.1"/><path d="M14 10a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.2-1.1"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1-3.8 4-5.5 7.5-5.5s6.5 1.7 7.5 5.5"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4h-4"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></symbol>
+</svg>
+
+<div id="loader"><div class="spin"></div><div style="font-weight:500;color:var(--ink2)">Loading the tracker…</div></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="mark" aria-hidden="true">
+      <!-- swatch-stack mark: three flooring sample chips -->
+      <svg width="34" height="30" viewBox="0 0 34 30">
+        <rect x="1"  y="7" width="18" height="18" rx="5" fill="#178A63" transform="rotate(-8 10 16)"/>
+        <rect x="8"  y="5" width="18" height="18" rx="5" fill="#A8720A" transform="rotate(3 17 14)" opacity=".92"/>
+        <rect x="14" y="4" width="18" height="18" rx="5" fill="#2B5FE3" transform="rotate(12 23 13)"/>
+        <path d="M20 13.5l2.4 2.4 4.6-4.8" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="rotate(12 23 13)"/>
+      </svg>
+    </span>
+    <h1>Sample Tracker</h1>
+    <span class="sub">Red Deer Carpet One · Commercial</span>
+  </div>
+  <nav class="nav">
+    <button id="nav-today" class="vbtn on" onclick="show('today')"><svg class="icon"><use href="#i-home"/></svg>Today<span class="cnt" id="badge-today" style="display:none"></span></button>
+    <button id="nav-receive" class="vbtn" onclick="show('receive')"><svg class="icon"><use href="#i-box"/></svg>Receive</button>
+    <button id="nav-projects" class="vbtn" onclick="show('projects')"><svg class="icon"><use href="#i-folder"/></svg>Projects</button>
+    <button id="nav-suppliers" class="vbtn" onclick="show('suppliers')"><svg class="icon"><use href="#i-users"/></svg>Suppliers</button>
+    <span class="spacer"></span>
+    <button class="ghost" onclick="openNewProject()"><svg class="icon"><use href="#i-plus"/></svg> New project</button>
+    <button class="ghost" title="Reload data" aria-label="Reload data" onclick="boot(true)"><svg class="icon"><use href="#i-refresh"/></svg></button>
+  </nav>
+</header>
+
+<main>
+  <!-- ============================ TODAY ============================ -->
+  <section id="view-today">
+    <div class="kpis" id="td-kpis"></div>
+    <div class="toolbar">
+      <div class="searchwrap"><svg class="icon"><use href="#i-search"/></svg>
+        <input type="search" id="td-q" placeholder="Search samples, projects, suppliers…" oninput="tFilter.q=this.value;deb(renderTodayLists)">
+      </div>
+      <select id="td-sup" onchange="tFilter.sup=this.value;renderTodayLists()"></select>
+      <select id="td-sort" onchange="tFilter.sort=this.value;renderTodayLists()">
+        <option value="due">Sort: due date</option>
+        <option value="supplier">Sort: supplier</option>
+        <option value="project">Sort: project</option>
+      </select>
+    </div>
+    <div id="td-lists"></div>
+  </section>
+
+  <!-- =========================== RECEIVE =========================== -->
+  <section id="view-receive" style="display:none">
+    <div id="rc-body"></div>
+  </section>
+
+  <!-- =========================== PROJECTS ========================== -->
+  <section id="view-projects" style="display:none">
+    <div class="toolbar">
+      <div class="searchwrap"><svg class="icon"><use href="#i-search"/></svg>
+        <input type="search" id="pj-q" placeholder="Search projects, clients, products…" oninput="pFilter.q=this.value;deb(renderProjectList)">
+      </div>
+      <select id="pj-status" onchange="pFilter.status=this.value;renderProjectList()">
+        <option>Active</option><option>Complete</option><option>All</option>
+      </select>
+      <select id="pj-sales" onchange="pFilter.sales=this.value;renderProjectList()"></select>
+      <select id="pj-sup" onchange="pFilter.sup=this.value;renderProjectList()"></select>
+      <button class="btn" onclick="openNewProject()"><svg class="icon"><use href="#i-plus"/></svg> New project</button>
+    </div>
+    <div id="pj-list"></div>
+  </section>
+
+  <!-- ========================== SUPPLIERS ========================== -->
+  <section id="view-suppliers" style="display:none">
+    <div class="toolbar">
+      <div class="searchwrap"><svg class="icon"><use href="#i-search"/></svg>
+        <input type="search" id="sp-q" placeholder="Search suppliers, reps, product lines…" oninput="sFilter.q=this.value;deb(renderSupplierList)">
+      </div>
+      <button class="btn" onclick="openSupplier(null)"><svg class="icon"><use href="#i-plus"/></svg> Add supplier</button>
+    </div>
+    <div id="sp-list"></div>
+  </section>
+</main>
+
+<!-- phone tab bar -->
+<nav class="tabbar">
+  <button id="tab-today" class="on" onclick="show('today')"><svg class="icon"><use href="#i-home"/></svg>Today<span class="dot" id="tbadge-today" style="display:none"></span></button>
+  <button id="tab-receive" onclick="show('receive')"><svg class="icon"><use href="#i-box"/></svg>Receive</button>
+  <button id="tab-projects" onclick="show('projects')"><svg class="icon"><use href="#i-folder"/></svg>Projects</button>
+  <button id="tab-suppliers" onclick="show('suppliers')"><svg class="icon"><use href="#i-users"/></svg>Suppliers</button>
+</nav>
+
+<!-- modals -->
+<div class="overlay" id="ov-project"><div class="modal" id="md-project"></div></div>
+<div class="overlay" id="ov-new"><div class="modal" id="md-new"></div></div>
+<div class="overlay" id="ov-supplier"><div class="modal" id="md-supplier"></div></div>
+<div class="overlay" id="ov-acc"><div class="modal" style="max-width:430px" id="md-acc"></div></div>
+
+<div id="toast" role="status"></div>
+<script>
+/* ================================================================
+   CONFIGURE ME — paste your Apps Script /exec URL and the token
+   you set in Code.gs CONFIG.API_TOKEN. Nothing else to touch.
+   ================================================================ */
+const API_URL   = 'https://script.google.com/macros/s/AKfycbzfXigNHD7vX5sUs4PUaPLfMl4sEeswMA4uQrYAO3CEjI-mW4hgtr3_bl-pDMQPm6fF/exec';
+const API_TOKEN = 'rdco-sam-7k2x9v';
+
+/* ============================== state ============================== */
+let DB = {team:[],suppliers:[],reps:[],projects:[],lines:[],today:''};
+let SUP={}, PROJ={}, REPSBYSUP={}, LINESBYPROJ={};
+let view='today';
+let tFilter={q:'',sup:'',sort:'due'};
+let pFilter={q:'',status:'Active',sales:'',sup:''};
+let sFilter={q:''};
+let rState={sup:null,q:''};
+let receivedNow=[];                 /* line IDs received this session (Receive view) */
+let openProjectId=null, accCtx=null, prefillLine=null, editLineId=null;
+const SLOW=12, RISK=3;
+
+/* ============================== API ================================ */
+function apiGet(){
+  return fetch(API_URL+'?action=getAll&token='+encodeURIComponent(API_TOKEN))
+    .then(r=>r.json()).then(j=>{if(!j.ok)throw new Error(j.error||'Load failed');return j.data;});
+}
+function apiPost(action,payload){
+  /* body is a plain string -> browser sends text/plain -> no CORS preflight */
+  return fetch(API_URL,{method:'POST',body:JSON.stringify({token:API_TOKEN,action,payload})})
+    .then(r=>r.json()).then(j=>{if(!j.ok)throw new Error(j.error||'Save failed');return j.result;});
+}
+function persist(action,payload,okMsg){
+  apiPost(action,payload).then(()=>{if(okMsg)toast(okMsg);})
+    .catch(e=>{toast('Save failed — reloading. '+e.message,true);boot(true);});
+}
+
+/* ============================ utilities ============================ */
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function ic(name){return '<svg class="icon"><use href="#i-'+name+'"/></svg>';}
+function toast(msg,err){const t=document.getElementById('toast');t.textContent=msg;t.className='show'+(err?' err':'');setTimeout(()=>t.className='',2600);}
+function today(){return DB.today||new Date().toISOString().slice(0,10);}
+function dDiff(a,b){return Math.round((new Date(b+'T12:00')-new Date(a+'T12:00'))/86400000);}
+function addDays(iso,n){const d=new Date(iso+'T12:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10);}
+function nice(iso){if(!iso)return'—';const d=new Date(iso+'T12:00');const o={month:'short',day:'numeric'};if(d.getFullYear()!==new Date().getFullYear())o.year='numeric';return d.toLocaleDateString('en-CA',o);}
+function median(arr){if(!arr.length)return null;const a=[...arr].sort((x,y)=>x-y);const m=Math.floor(a.length/2);return a.length%2?a[m]:Math.round((a[m-1]+a[m])/2);}
+let debT=null;function deb(fn){clearTimeout(debT);debT=setTimeout(fn,130);}
+
+function index(){
+  SUP={};DB.suppliers.forEach(s=>SUP[s.ID]=s);
+  PROJ={};DB.projects.forEach(p=>PROJ[p.ID]=p);
+  REPSBYSUP={};DB.reps.forEach(r=>(REPSBYSUP[r['Supplier ID']]=REPSBYSUP[r['Supplier ID']]||[]).push(r));
+  LINESBYPROJ={};DB.lines.forEach(l=>(LINESBYPROJ[l['Project ID']]=LINESBYPROJ[l['Project ID']]||[]).push(l));
+}
+function rep(id){return DB.reps.find(r=>r.ID===id);}
+function supStats(sid){
+  const ls=DB.lines.filter(l=>l['Supplier ID']===sid);
+  const leads=ls.filter(l=>l['Date Ordered']&&l['Date Arrived']).map(l=>dDiff(l['Date Ordered'],l['Date Arrived'])).filter(n=>n>=0);
+  const rated=ls.filter(l=>l.Accuracy);
+  const correct=rated.filter(l=>l.Accuracy==='Correct').length;
+  return {median:median(leads),leadCount:leads.length,accPct:rated.length?Math.round(correct/rated.length*100):null,accCount:rated.length};
+}
+function isOverdue(l){return l.Status==='Ordered'&&l['Expected Arrival']&&l['Expected Arrival']<today();}
+function projProgress(pid){
+  const ls=LINESBYPROJ[pid]||[];
+  const arrived=ls.filter(l=>l.Status==='Arrived'||l.Status==='Delivered').length;
+  const delivered=ls.filter(l=>l.Status==='Delivered').length;
+  return {total:ls.length,arrived,delivered};
+}
+function neededPill(p){
+  if(!p['Needed By'])return'';
+  const d=dDiff(today(),p['Needed By']);
+  const cls=d<0?'late':(d<=RISK?'late':(d<=7?'warn':'neutral'));
+  const txt=d<0?('needed '+(-d)+'d ago'):'needed '+nice(p['Needed By']);
+  return '<span class="pill '+cls+'">'+esc(txt)+'</span>';
+}
+
+/* ============================ persistence ========================== */
+function saveProject(p,msg){if(!PROJ[p.ID]&&p.ID)DB.projects.push(p);index();persist('saveProject',p,msg);}
+function saveLine(l,msg){if(!DB.lines.find(x=>x.ID===l.ID))DB.lines.push(l);index();persist('saveLine',l,msg);}
+function saveSupplier(s,msg){if(!SUP[s.ID])DB.suppliers.push(s);index();refreshFilters();persist('saveSupplier',s,msg);}
+function saveRep(r,msg){if(!DB.reps.find(x=>x.ID===r.ID))DB.reps.push(r);index();persist('saveRep',r,msg);}
+function removeThing(kind,id,msg){
+  if(kind==='line')DB.lines=DB.lines.filter(l=>l.ID!==id);
+  if(kind==='rep')DB.reps=DB.reps.filter(r=>r.ID!==id);
+  if(kind==='project'){DB.lines=DB.lines.filter(l=>l['Project ID']!==id);DB.projects=DB.projects.filter(p=>p.ID!==id);}
+  index();persist('delete',{kind,id},msg);
+}
+function newId(p){return p+Date.now()+'_'+Math.floor(Math.random()*10000);}
+
+/* =============================== nav =============================== */
+function show(v){
+  view=v;
+  ['today','receive','projects','suppliers'].forEach(x=>{
+    document.getElementById('view-'+x).style.display=x===v?'':'none';
+    document.getElementById('nav-'+x).className='vbtn'+(x===v?' on':'');
+    document.getElementById('tab-'+x).className=x===v?'on':'';
+  });
+  render();
+  window.scrollTo({top:0});
+}
+function render(){
+  updateBadges();
+  if(view==='today')renderToday();
+  if(view==='receive')renderReceive();
+  if(view==='projects')renderProjectList();
+  if(view==='suppliers')renderSupplierList();
+}
+function updateBadges(){
+  const n=DB.lines.filter(isOverdue).length;
+  const b=document.getElementById('badge-today'),tb=document.getElementById('tbadge-today');
+  b.style.display=tb.style.display=n?'':'none';
+  b.textContent=tb.textContent=n;
+}
+/* fill the static filter dropdowns, keeping the current selection */
+function refreshFilters(){
+  const supOpts=sel=>'<option value="">All suppliers</option>'+[...DB.suppliers].sort((a,b)=>a.Name.localeCompare(b.Name))
+    .map(s=>'<option value="'+s.ID+'"'+(sel===s.ID?' selected':'')+'>'+esc(s.Name)+'</option>').join('');
+  document.getElementById('td-sup').innerHTML=supOpts(tFilter.sup);
+  document.getElementById('pj-sup').innerHTML=supOpts(pFilter.sup);
+  document.getElementById('pj-sales').innerHTML='<option value="">All salespeople</option>'+
+    [...new Set(DB.team.map(t=>t.Name))].map(s=>'<option'+(pFilter.sales===s?' selected':'')+'>'+esc(s)+'</option>').join('');
+  document.getElementById('pj-status').value=pFilter.status;
+  document.getElementById('td-sort').value=tFilter.sort;
+}
+
+/* ============================ TODAY view =========================== */
+function lineRow(l,inModal){
+  const p=PROJ[l['Project ID']]||{},s=SUP[l['Supplier ID']]||{},r=rep(l['Rep ID']);
+  const od=isOverdue(l);
+  let when='';
+  if(l.Status==='Ordered')when=l['Expected Arrival']?(od?'<span class="pill late">'+dDiff(l['Expected Arrival'],today())+'d late · was due '+nice(l['Expected Arrival'])+'</span>':'<span class="subtle">expected '+nice(l['Expected Arrival'])+'</span>'):'<span class="pill neutral">no ETA — new supplier</span>';
+  if(l.Status==='Arrived')when='<span class="subtle">arrived '+nice(l['Date Arrived'])+'</span>'+(l.Accuracy&&l.Accuracy!=='Correct'?' <span class="pill warn">'+esc(l.Accuracy)+'</span>':'');
+  if(l.Status==='Delivered')when='<span class="subtle">delivered '+nice(l['Date Delivered'])+'</span>';
+  const contact=r&&r.Email?('<a href="mailto:'+esc(r.Email)+'">'+esc(r.Name||r.Email)+'</a>'):(s['Sample Dept Email']?'<a href="mailto:'+esc(s['Sample Dept Email'])+'">sample dept</a>':'');
+  return '<div class="rowcard s-'+l.Status+(od?' overdue':'')+'">'+
+    '<div class="grow"><div class="title">'+esc(l.Product||'(unnamed sample)')+(l.SKU?' <span class="sku">'+esc(l.SKU)+'</span>':'')+'</div>'+
+    '<div class="meta">'+esc(s.Name||'—')+(contact?' · '+contact:'')+' · <a href="#" onclick="openProject(\''+l['Project ID']+'\');return false">'+esc(p['Project Name']||'—')+'</a> · ordered '+nice(l['Date Ordered'])+'</div></div>'+
+    '<div>'+when+'</div><span class="pill '+l.Status+'">'+l.Status+'</span>'+
+    (l.Status==='Ordered'?'<button class="btn sm" onclick="askAccuracy([\''+l.ID+'\'])">'+ic('box')+' Receive</button>':'')+
+    (l.Status==='Arrived'?'<button class="btn sm good" onclick="markDelivered(\''+l.ID+'\')">'+ic('check')+' Hand off</button>':'')+
+    (inModal?'<button class="btn sm ghost" onclick="editLine(\''+l.ID+'\')">'+ic('edit')+'</button><button class="btn sm ghost" title="Duplicate" onclick="duplicateLine(\''+l.ID+'\')">'+ic('copy')+'</button><button class="btn sm danger" onclick="if(confirm(\'Delete this sample line?\'))delLine(\''+l.ID+'\')">'+ic('trash')+'</button>':'')+
+  '</div>';
+}
+function renderToday(){
+  const t=today();
+  const open=DB.lines.filter(l=>l.Status==='Ordered');
+  const overdue=open.filter(isOverdue);
+  const arriving=open.filter(l=>!isOverdue(l)&&l['Expected Arrival']&&l['Expected Arrival']<=addDays(t,7));
+  const active=DB.projects.filter(p=>p.Status==='Active');
+  document.getElementById('td-kpis').innerHTML=
+    '<div class="kpi"><div class="n">'+active.length+'</div><div class="t">Active projects</div></div>'+
+    '<div class="kpi"><div class="n">'+open.length+'</div><div class="t">Samples in transit</div></div>'+
+    '<div class="kpi'+(overdue.length?' alert':'')+'"><div class="n">'+overdue.length+'</div><div class="t">Overdue</div></div>'+
+    '<div class="kpi"><div class="n">'+arriving.length+'</div><div class="t">Arriving this week</div></div>';
+  renderTodayLists();
+}
+function renderTodayLists(){
+  const t=today();
+  const open=DB.lines.filter(l=>l.Status==='Ordered');
+  const overdue=open.filter(isOverdue);
+  const ready=DB.lines.filter(l=>l.Status==='Arrived');
+  const active=DB.projects.filter(p=>p.Status==='Active');
+  const atRisk=active.filter(p=>p['Needed By']&&p['Needed By']<=addDays(t,RISK)&&(LINESBYPROJ[p.ID]||[]).some(l=>l.Status==='Ordered'));
+  const f=l=>{
+    if(tFilter.sup&&l['Supplier ID']!==tFilter.sup)return false;
+    if(tFilter.q){const q=tFilter.q.toLowerCase();const p=PROJ[l['Project ID']]||{},s=SUP[l['Supplier ID']]||{};
+      if(!((l.Product||'')+(l.SKU||'')+(p['Project Name']||'')+(s.Name||'')).toLowerCase().includes(q))return false;}
+    return true;
+  };
+  const srt=(a,b)=>{
+    if(tFilter.sort==='due')return (a['Expected Arrival']||'9999')<(b['Expected Arrival']||'9999')?-1:1;
+    if(tFilter.sort==='supplier')return (SUP[a['Supplier ID']]||{Name:''}).Name.localeCompare((SUP[b['Supplier ID']]||{Name:''}).Name);
+    return ((PROJ[a['Project ID']]||{})['Project Name']||'').localeCompare(((PROJ[b['Project ID']]||{})['Project Name']||''));
+  };
+  let h='';
+  if(atRisk.length){
+    h+='<div class="sect"><h2>Projects at risk<span class="count hot">'+atRisk.length+'</span></h2>';
+    atRisk.forEach(p=>{const pr=projProgress(p.ID);
+      h+='<div class="rowcard overdue"><div class="grow"><div class="title">'+esc(p['Project Name'])+'</div><div class="meta">'+esc(p.Client||'')+' · '+esc(p.Salesperson||'')+' · '+(pr.total-pr.arrived)+' of '+pr.total+' samples still in transit</div></div>'+neededPill(p)+'<button class="btn sm" onclick="openProject(\''+p.ID+'\')">Open</button></div>';});
+    h+='</div>';
+  }
+  const od=overdue.filter(f).sort(srt);
+  h+='<div class="sect"><h2>Overdue<span class="count'+(od.length?' hot':'')+'">'+od.length+'</span></h2>'+(od.length?od.map(l=>lineRow(l)).join(''):'<div class="empty"><b>Nothing overdue.</b> The board is clean.</div>')+'</div>';
+  const rd=ready.filter(f).sort(srt);
+  if(rd.length)h+='<div class="sect"><h2>In the building — ready to hand off<span class="count">'+rd.length+'</span></h2>'+rd.map(l=>lineRow(l)).join('')+'</div>';
+  const ar=open.filter(l=>!isOverdue(l)).filter(f).sort(srt);
+  h+='<div class="sect"><h2>In transit<span class="count">'+ar.length+'</span></h2>'+(ar.length?ar.map(l=>lineRow(l)).join(''):'<div class="empty">Nothing on the way right now.</div>')+'</div>';
+  document.getElementById('td-lists').innerHTML=h;
+}
+
+/* =========================== RECEIVE view ========================== */
+/* Built for the warehouse: a box shows up from Mohawk -> tap Mohawk
+   -> tap what is in the box -> done. Everything is thumb-sized.    */
+function renderReceive(){
+  const el=document.getElementById('rc-body');
+  const open=DB.lines.filter(l=>l.Status==='Ordered');
+  if(rState.sup){renderReceiveSupplier(el,open);return;}
+  const bySup={};
+  open.forEach(l=>{(bySup[l['Supplier ID']]=bySup[l['Supplier ID']]||[]).push(l);});
+  const ids=Object.keys(bySup).sort((a,b)=>((SUP[a]||{Name:'~'}).Name).localeCompare((SUP[b]||{Name:'~'}).Name));
+  let h='<div class="pagehead"><h2>Receive samples</h2><p>A box just arrived — who is it from?</p></div>';
+  if(!ids.length){
+    h+='<div class="empty"><b>Nothing is on order.</b> When samples are ordered, the supplier appears here.</div>';
+  }else{
+    h+='<div class="supgrid">'+ids.map(sid=>{
+      const s=SUP[sid]||{Name:'Unknown supplier'};
+      const ls=bySup[sid];const late=ls.filter(isOverdue).length;
+      return '<button class="boxcard" onclick="rState.sup=\''+sid+'\';renderReceive()">'+
+        '<div class="bhead"><span class="bicon">'+ic('box')+'</span><h3>'+esc(s.Name)+'</h3></div>'+
+        '<div class="bmeta"><span class="pill Ordered">'+ls.length+' waiting</span>'+(late?'<span class="pill late">'+late+' overdue</span>':'')+'</div></button>';
+    }).join('')+'</div>';
+  }
+  if(receivedNow.length)h+=receivedNowBlock();
+  el.innerHTML=h;
+}
+function renderReceiveSupplier(el,open){
+  const s=SUP[rState.sup]||{Name:'Unknown supplier'};
+  const ls=open.filter(l=>l['Supplier ID']===rState.sup)
+    .sort((a,b)=>(a['Expected Arrival']||'9999')<(b['Expected Arrival']||'9999')?-1:1);
+  let h='<button class="backlink" onclick="rState.sup=null;renderReceive()">'+ic('back')+' All suppliers</button>'+
+    '<div class="pagehead"><h2>'+esc(s.Name)+'</h2><p>Tap each sample that is in the box.</p></div>';
+  if(ls.length>1)h+='<div style="margin-bottom:14px"><button class="btn good" onclick="receiveAll()">'+ic('check')+' Everything is here &amp; correct ('+ls.length+')</button></div>';
+  if(!ls.length)h+='<div class="empty"><b>All caught up.</b> Nothing left on order from '+esc(s.Name)+'.</div>';
+  ls.forEach(l=>{
+    const p=PROJ[l['Project ID']]||{};const od=isOverdue(l);
+    h+='<div class="rowcard recvrow s-Ordered'+(od?' overdue':'')+'">'+
+      '<div class="grow"><div class="title">'+esc(l.Product||'(unnamed sample)')+(l.SKU?' <span class="sku">'+esc(l.SKU)+'</span>':'')+'</div>'+
+      '<div class="meta">'+esc(p['Project Name']||'—')+' · ordered '+nice(l['Date Ordered'])+(l['Expected Arrival']?(od?' · <span class="pill late">'+dDiff(l['Expected Arrival'],today())+'d late</span>':' · expected '+nice(l['Expected Arrival'])):'')+'</div></div>'+
+      '<button class="btn sm" onclick="askAccuracy([\''+l.ID+'\'])">'+ic('box')+' Receive</button></div>';
+  });
+  if(receivedNow.length)h+=receivedNowBlock();
+  el.innerHTML=h;
+}
+function receivedNowBlock(){
+  const ls=receivedNow.map(id=>DB.lines.find(l=>l.ID===id)).filter(Boolean);
+  if(!ls.length)return'';
+  return '<div class="sect" style="margin-top:26px"><h2>Received just now<span class="count">'+ls.length+'</span></h2>'+
+    ls.map(l=>{const s=SUP[l['Supplier ID']]||{};const p=PROJ[l['Project ID']]||{};
+      return '<div class="rowcard justnow s-Arrived"><div class="grow"><div class="title">'+esc(l.Product||'')+'</div>'+
+      '<div class="meta">'+esc(s.Name||'')+' · '+esc(p['Project Name']||'')+'</div></div>'+
+      (l.Accuracy&&l.Accuracy!=='Correct'?'<span class="pill warn">'+esc(l.Accuracy)+'</span>':'')+
+      '<span class="pill Arrived">Arrived</span></div>';}).join('')+'</div>';
+}
+function receiveAll(){
+  const ids=DB.lines.filter(l=>l.Status==='Ordered'&&l['Supplier ID']===rState.sup).map(l=>l.ID);
+  if(!ids.length)return;
+  commitReceive(ids,'Correct');
+  toast(ids.length+' samples received');
+}
+function commitReceive(ids,acc){
+  const t=today();
+  ids.forEach(id=>{const l=DB.lines.find(x=>x.ID===id);if(!l)return;
+    l.Status='Arrived';l['Date Arrived']=t;l.Accuracy=acc;
+    if(!receivedNow.includes(id))receivedNow.unshift(id);});
+  index();
+  persist('receive',{items:ids.map(id=>({id,accuracy:acc}))});
+  updateBadges();
+  if(document.getElementById('ov-project').classList.contains('open'))renderProjectModal();else render();
+}
+
+/* arrival + accuracy — shared by Today, Receive, and project modal */
+function askAccuracy(ids){
+  accCtx=ids;
+  const l=DB.lines.find(x=>x.ID===ids[0])||{};
+  const s=SUP[l['Supplier ID']]||{};
+  document.getElementById('md-acc').innerHTML='<button class="close" onclick="closeOv(\'ov-acc\')">'+ic('x')+'</button>'+
+    '<h2>How did it arrive?</h2><p class="subtle" style="margin-top:4px">'+esc(l.Product||'')+(s.Name?' · '+esc(s.Name):'')+' — this builds the supplier\'s accuracy rating.</p>'+
+    '<div class="acc-opts">'+
+    '<button class="btn good" onclick="finishArrival(\'Correct\')">'+ic('check')+' Correct &amp; complete</button>'+
+    '<button class="btn warn" onclick="finishArrival(\'Incomplete\')">'+ic('half')+' Incomplete</button>'+
+    '<button class="btn bad" onclick="finishArrival(\'Wrong item\')">'+ic('x')+' Wrong item</button>'+
+    '<button class="btn ghost" onclick="finishArrival(\'\')">Skip — just mark arrived</button></div>';
+  document.getElementById('ov-acc').classList.add('open');
+}
+function finishArrival(acc){
+  document.getElementById('ov-acc').classList.remove('open');
+  if(!accCtx)return;
+  commitReceive(accCtx,acc);
+  accCtx=null;
+  toast('Marked arrived');
+}
+function markDelivered(id){
+  const l=DB.lines.find(x=>x.ID===id);if(!l)return;
+  l.Status='Delivered';l['Date Delivered']=today();
+  saveLine(l,'Handed off');
+  const ls=LINESBYPROJ[l['Project ID']]||[];
+  const p=PROJ[l['Project ID']];
+  if(p&&p.Status==='Active'&&ls.length&&ls.every(x=>x.Status==='Delivered')){
+    p.Status='Complete';p.Completed=today();saveProject(p,'All samples delivered — project complete');
+  }
+  if(document.getElementById('ov-project').classList.contains('open'))renderProjectModal();else render();
+}
+
+/* ========================== PROJECTS view ========================== */
+function renderProjectList(){
+  let list=DB.projects.filter(p=>{
+    if(pFilter.status!=='All'&&p.Status!==pFilter.status)return false;
+    if(pFilter.sales&&p.Salesperson!==pFilter.sales)return false;
+    const ls=LINESBYPROJ[p.ID]||[];
+    if(pFilter.sup&&!ls.some(l=>l['Supplier ID']===pFilter.sup))return false;
+    if(pFilter.q){const q=pFilter.q.toLowerCase();
+      const blob=(p['Project Name']||'')+(p.Client||'')+ls.map(l=>(l.Product||'')+(l.SKU||'')).join('');
+      if(!blob.toLowerCase().includes(q))return false;}
+    return true;
+  }).sort((a,b)=>(a['Needed By']||'9999')<(b['Needed By']||'9999')?-1:1);
+
+  let h='';
+  if(!list.length){h='<div class="empty"><b>No projects here yet.</b> Start one with "New project".</div>';}
+  else{
+    h='<div class="grid">'+list.map(p=>{
+      const pr=projProgress(p.ID);
+      const sups=[...new Set((LINESBYPROJ[p.ID]||[]).map(l=>(SUP[l['Supplier ID']]||{}).Name).filter(Boolean))];
+      const pct=pr.total?Math.round(pr.arrived/pr.total*100):0;
+      const hasLate=(LINESBYPROJ[p.ID]||[]).some(isOverdue);
+      return '<div class="pcard" onclick="openProject(\''+p.ID+'\')"><h3>'+esc(p['Project Name'])+'</h3>'+
+        '<div class="meta">'+esc(p.Client||'')+(p.Salesperson?' · '+esc(p.Salesperson):'')+'</div>'+
+        '<div class="chips">'+neededPill(p)+(hasLate?'<span class="pill late">overdue samples</span>':'')+(p.Status==='Complete'?'<span class="pill Arrived">Complete</span>':'')+'</div>'+
+        '<div class="thread"><i class="'+(pct===100?'done':'')+'" style="width:'+pct+'%"></i></div>'+
+        '<div class="prog">'+pr.arrived+' of '+pr.total+' arrived · '+pr.delivered+' handed off</div>'+
+        (sups.length?'<div class="meta" style="margin-top:6px">'+esc(sups.join(' · '))+'</div>':'')+'</div>';
+    }).join('')+'</div>';
+  }
+  document.getElementById('pj-list').innerHTML=h;
+}
+
+/* project modal */
+function openProject(pid){
+  openProjectId=pid;prefillLine=null;editLineId=null;
+  document.getElementById('ov-project').classList.add('open');
+  renderProjectModal();
+}
+function closeOv(id){
+  if(id==='ov-project'){editLineId=null;prefillLine=null;}
+  document.getElementById(id).classList.remove('open');render();
+}
+function saveAndClose(){
+  const e=document.getElementById('proj-edit');
+  if(e&&e.style.display!=='none')saveProjEdit();
+  closeOv('ov-project');toast('Project saved');
+}
+function renderProjectModal(){
+  const p=PROJ[openProjectId];if(!p)return closeOv('ov-project');
+  const ls=(LINESBYPROJ[p.ID]||[]).slice().sort((a,b)=>(a['Date Ordered']||'')<(b['Date Ordered']||'')?-1:1);
+  const pr=projProgress(p.ID);
+  let h='<button class="close" onclick="closeOv(\'ov-project\')">'+ic('x')+'</button>'+
+    '<h2>'+esc(p['Project Name'])+'</h2>'+
+    '<div class="subtle">'+esc(p.Client||'')+(p.Salesperson?' · '+esc(p.Salesperson):'')+' · created '+nice(p.Created)+'</div>'+
+    '<div class="chips" style="margin-top:8px">'+neededPill(p)+'<span class="pill '+(p.Status==='Complete'?'Arrived':'Ordered')+'">'+esc(p.Status)+'</span></div>'+
+    (p.Notes?'<div class="hint">'+esc(p.Notes)+'</div>':'')+
+    '<div style="margin-top:10px"><button class="btn sm ghost" onclick="toggleEditProj()">'+ic('edit')+' Edit details</button></div>'+
+    '<div id="proj-edit" style="display:none;margin-top:10px" class="card"><div class="fields">'+
+      '<div><label>Project name</label><input id="pe-name" value="'+esc(p['Project Name'])+'"></div>'+
+      '<div><label>Client</label><input id="pe-client" value="'+esc(p.Client)+'"></div>'+
+      '<div><label>Salesperson</label><select id="pe-sales">'+DB.team.map(t=>'<option'+(p.Salesperson===t.Name?' selected':'')+'>'+esc(t.Name)+'</option>').join('')+'</select></div>'+
+      '<div><label>Needed by</label><input type="date" id="pe-needed" value="'+esc(p['Needed By'])+'"></div></div>'+
+      '<label>Notes</label><textarea id="pe-notes" rows="2">'+esc(p.Notes)+'</textarea>'+
+      '<div style="margin-top:10px"><button class="btn sm" onclick="saveProjEdit()">Save details</button></div></div>'+
+    '<hr class="soft"><h3 style="margin-bottom:8px;font-size:15px">Samples — '+pr.arrived+' of '+pr.total+' arrived</h3>'+
+    (ls.length?ls.map(l=>lineRow(l,true)).join(''):'<div class="empty">No samples yet — add the first one below.</div>')+
+    '<hr class="soft">'+addLineForm()+
+    '<hr class="soft"><div style="display:flex;gap:8px;flex-wrap:wrap">'+
+    '<button class="btn" onclick="saveAndClose()">Save &amp; close</button>'+
+    (p.Status==='Active'?'<button class="btn sm ghost" onclick="completeProject()">Mark project complete</button>':'<button class="btn sm ghost" onclick="reopenProject()">Reopen project</button>')+
+    '<button class="btn sm danger" onclick="if(confirm(\'Delete this project AND all its sample lines?\'))delProject()">'+ic('trash')+' Delete</button></div>';
+  document.getElementById('md-project').innerHTML=h;
+  if(editLineId)fillLineForm();
+  else if(prefillLine)applyPrefill();
+}
+function toggleEditProj(){const e=document.getElementById('proj-edit');e.style.display=e.style.display==='none'?'':'none';}
+function saveProjEdit(){
+  const p=PROJ[openProjectId];
+  p['Project Name']=document.getElementById('pe-name').value.trim();
+  p.Client=document.getElementById('pe-client').value.trim();
+  p.Salesperson=document.getElementById('pe-sales').value;
+  p['Needed By']=document.getElementById('pe-needed').value;
+  p.Notes=document.getElementById('pe-notes').value.trim();
+  saveProject(p,'Project updated');renderProjectModal();
+}
+function completeProject(){const p=PROJ[openProjectId];p.Status='Complete';p.Completed=today();saveProject(p,'Project complete');renderProjectModal();}
+function reopenProject(){const p=PROJ[openProjectId];p.Status='Active';p.Completed='';saveProject(p,'Project reopened');renderProjectModal();}
+function delProject(){removeThing('project',openProjectId,'Project deleted');closeOv('ov-project');}
+function delLine(id){removeThing('line',id,'Sample line deleted');renderProjectModal();}
+
+/* add-line form (shared by project modal + new-project modal) */
+function addLineForm(idp){
+  idp=idp||'al';
+  const editing=(idp==='al'&&editLineId);
+  return '<div class="card"><h3 style="font-size:15px;margin-bottom:4px">'+(editing?'Edit sample':'Add a sample')+'</h3><div class="fields">'+
+    '<div><label>Supplier</label><select id="'+idp+'-sup" onchange="lineSupChanged(\''+idp+'\')"><option value="">Choose…</option>'+
+      [...DB.suppliers].sort((a,b)=>a.Name.localeCompare(b.Name)).map(s=>'<option value="'+s.ID+'">'+esc(s.Name)+'</option>').join('')+'</select>'+
+      '<div class="subtle" style="margin-top:3px"><a href="#" onclick="openSupplier(null);return false">+ new supplier</a></div></div>'+
+    '<div><label>Rep</label><select id="'+idp+'-rep"><option value="">—</option></select></div>'+
+    '<div><label>Product</label><input id="'+idp+'-prod" placeholder="e.g. Quiet Cover LVT"></div>'+
+    '<div><label>SKU / colour</label><input id="'+idp+'-sku"></div>'+
+    '<div><label>Date ordered</label><input type="date" id="'+idp+'-date" value="'+today()+'" onchange="lineSupChanged(\''+idp+'\')"></div>'+
+    '<div><label>Notes</label><input id="'+idp+'-notes"></div>'+
+    (editing?'<div><label>Expected arrival</label><input type="date" id="al-eta-input"></div>':'')+
+    '</div><div class="hint" id="'+idp+'-eta">Pick a supplier to see the estimated arrival.</div>'+
+    (idp==='al'?(editing
+      ?'<div style="margin-top:10px"><button class="btn sm" onclick="submitLine()">Save changes</button> <button class="btn sm ghost" onclick="cancelEditLine()">Cancel</button></div>'
+      :'<div style="margin-top:10px"><button class="btn sm" onclick="submitLine()">'+ic('plus')+' Add sample</button></div>'):'')+
+  '</div>';
+}
+function editLine(id){
+  editLineId=id;prefillLine=null;renderProjectModal();
+  const el=document.getElementById('al-sup');if(el)el.scrollIntoView({behavior:'smooth'});
+}
+function cancelEditLine(){editLineId=null;renderProjectModal();}
+function fillLineForm(){
+  const l=DB.lines.find(x=>x.ID===editLineId);if(!l)return;
+  document.getElementById('al-prod').value=l.Product;
+  document.getElementById('al-sku').value=l.SKU;
+  document.getElementById('al-date').value=l['Date Ordered'];
+  document.getElementById('al-notes').value=l.Notes;
+  document.getElementById('al-sup').value=l['Supplier ID'];
+  lineSupChanged('al');
+  document.getElementById('al-rep').value=l['Rep ID'];
+  const eta=document.getElementById('al-eta-input');if(eta)eta.value=l['Expected Arrival'];
+}
+function lineSupChanged(idp){
+  const sid=document.getElementById(idp+'-sup').value;
+  const repSel=document.getElementById(idp+'-rep');
+  const rr=REPSBYSUP[sid]||[];
+  repSel.innerHTML='<option value="">—</option>'+rr.map(r=>'<option value="'+r.ID+'">'+esc(r.Name||r.Email)+(r['Product Line']?' · '+esc(r['Product Line']):'')+'</option>').join('');
+  if(rr.length===1)repSel.value=rr[0].ID;
+  const eta=document.getElementById(idp+'-eta');
+  if(!sid){eta.textContent='Pick a supplier to see the estimated arrival.';return;}
+  const st=supStats(sid);
+  const od=document.getElementById(idp+'-date').value||today();
+  if(st.median!=null){
+    eta.innerHTML='Estimated arrival ~ <b>'+nice(addDays(od,st.median))+'</b> (median '+st.median+' days over '+st.leadCount+' orders'+(st.median>=SLOW?' — <b>this supplier runs slow</b>':'')+')';
+  }else eta.textContent='No history with this supplier yet — arrival unknown until data builds.';
+}
+function readLineForm(idp){
+  idp=idp||'al';
+  const sid=document.getElementById(idp+'-sup').value;
+  if(!sid){toast('Pick a supplier first',true);return null;}
+  const od=document.getElementById(idp+'-date').value||today();
+  const st=supStats(sid);
+  return {ID:newId('L'),'Project ID':openProjectId,'Supplier ID':sid,'Rep ID':document.getElementById(idp+'-rep').value,
+    Product:document.getElementById(idp+'-prod').value.trim(),SKU:document.getElementById(idp+'-sku').value.trim(),
+    'Date Ordered':od,'Expected Arrival':st.median!=null?addDays(od,st.median):'',
+    Status:'Ordered',Accuracy:'','Date Arrived':'','Date Delivered':'',Notes:document.getElementById(idp+'-notes').value.trim()};
+}
+function submitLine(){
+  if(editLineId){
+    const l=DB.lines.find(x=>x.ID===editLineId);if(!l){editLineId=null;return;}
+    const sid=document.getElementById('al-sup').value;
+    if(!sid){toast('Pick a supplier first',true);return;}
+    const prod=document.getElementById('al-prod').value.trim();
+    if(!prod){toast('Give the sample a product name',true);return;}
+    l['Supplier ID']=sid;l['Rep ID']=document.getElementById('al-rep').value;
+    l.Product=prod;l.SKU=document.getElementById('al-sku').value.trim();
+    l['Date Ordered']=document.getElementById('al-date').value||l['Date Ordered'];
+    l['Expected Arrival']=document.getElementById('al-eta-input').value;
+    l.Notes=document.getElementById('al-notes').value.trim();
+    editLineId=null;saveLine(l,'Sample updated');renderProjectModal();return;
+  }
+  const l=readLineForm('al');if(!l)return;
+  if(!l.Product){toast('Give the sample a product name',true);return;}
+  saveLine(l,'Sample added');
+  const p=PROJ[openProjectId];if(p.Status==='Complete'){p.Status='Active';p.Completed='';saveProject(p);}
+  renderProjectModal();
+}
+function duplicateLine(id){
+  const l=DB.lines.find(x=>x.ID===id);if(!l)return;
+  editLineId=null;
+  prefillLine={sup:l['Supplier ID'],rep:l['Rep ID'],prod:l.Product,sku:l.SKU,notes:l.Notes};
+  renderProjectModal();
+  document.getElementById('al-sup').scrollIntoView({behavior:'smooth'});
+  toast('Copied — tweak and add');
+}
+function applyPrefill(){
+  const f=prefillLine;prefillLine=null;
+  document.getElementById('al-sup').value=f.sup;lineSupChanged('al');
+  document.getElementById('al-rep').value=f.rep;
+  document.getElementById('al-prod').value=f.prod;document.getElementById('al-sku').value=f.sku;
+  document.getElementById('al-notes').value=f.notes;
+}
+
+/* new project modal */
+function openNewProject(){
+  openProjectId=null;
+  document.getElementById('md-new').innerHTML='<button class="close" onclick="closeOv(\'ov-new\')">'+ic('x')+'</button>'+
+    '<h2>New project</h2><div class="fields">'+
+    '<div><label>Project name</label><input id="np-name" placeholder="e.g. Pickleball Court"></div>'+
+    '<div><label>Client</label><input id="np-client"></div>'+
+    '<div><label>Salesperson</label><select id="np-sales">'+DB.team.map(t=>'<option>'+esc(t.Name)+'</option>').join('')+'</select></div>'+
+    '<div><label>Needed by</label><input type="date" id="np-needed"></div></div>'+
+    '<label>Notes</label><textarea id="np-notes" rows="2"></textarea>'+
+    '<hr class="soft"><h3 style="font-size:15px">First sample</h3>'+addLineForm('np1')+
+    '<div style="margin-top:14px"><button class="btn" onclick="submitNewProject()">Create project</button> <span class="subtle">You can add more samples right after.</span></div>';
+  document.getElementById('ov-new').classList.add('open');
+}
+function submitNewProject(){
+  const name=document.getElementById('np-name').value.trim();
+  if(!name){toast('The project needs a name',true);return;}
+  const p={ID:newId('P'),'Project Name':name,Client:document.getElementById('np-client').value.trim(),
+    Salesperson:document.getElementById('np-sales').value,'Needed By':document.getElementById('np-needed').value,
+    Status:'Active',Notes:document.getElementById('np-notes').value.trim(),Created:today(),Completed:''};
+  saveProject(p,'Project created');
+  openProjectId=p.ID;
+  const sid=document.getElementById('np1-sup').value;
+  if(sid){
+    const od=document.getElementById('np1-date').value||today();
+    const st=supStats(sid);
+    saveLine({ID:newId('L'),'Project ID':p.ID,'Supplier ID':sid,'Rep ID':document.getElementById('np1-rep').value,
+      Product:document.getElementById('np1-prod').value.trim(),SKU:document.getElementById('np1-sku').value.trim(),
+      'Date Ordered':od,'Expected Arrival':st.median!=null?addDays(od,st.median):'',
+      Status:'Ordered',Accuracy:'','Date Arrived':'','Date Delivered':'',Notes:document.getElementById('np1-notes').value.trim()});
+  }
+  closeOv('ov-new');openProject(p.ID);
+}
+
+/* ========================= SUPPLIERS view ========================== */
+function speedBadge(st){
+  if(st.median==null)return'<span class="pill neutral">Speed: building…</span>';
+  const cls=st.median>=SLOW?'warn':'Arrived';
+  return '<span class="pill '+cls+'">Median '+st.median+'d · '+st.leadCount+' orders</span>';
+}
+function accBadge(st){
+  if(st.accPct==null)return'<span class="pill neutral">Accuracy: no data</span>';
+  const cls=st.accPct>=90?'Arrived':(st.accPct>=70?'warn':'late');
+  return '<span class="pill '+cls+'">Accuracy '+st.accPct+'% · '+st.accCount+' rated</span>';
+}
+function renderSupplierList(){
+  let h='';
+  const list=[...DB.suppliers].sort((a,b)=>a.Name.localeCompare(b.Name)).filter(s=>{
+    if(!sFilter.q)return true;const q=sFilter.q.toLowerCase();
+    const rr=(REPSBYSUP[s.ID]||[]).map(r=>(r.Name||'')+(r['Product Line']||'')+(r.Email||'')).join('');
+    return (s.Name+rr+(s.Notes||'')).toLowerCase().includes(q);
+  });
+  if(!list.length)h='<div class="empty">No suppliers match.</div>';
+  list.forEach(s=>{
+    const st=supStats(s.ID);
+    const rr=REPSBYSUP[s.ID]||[];
+    h+='<div class="scard"><div class="head"><h3>'+esc(s.Name)+'</h3>'+speedBadge(st)+accBadge(st)+
+      '<button class="btn sm ghost" onclick="openSupplier(\''+s.ID+'\')">'+ic('edit')+' Edit</button></div>'+
+      '<div class="kvs">'+
+      (s.Website?'<span>'+ic('link')+' <a href="'+esc(/^https?:/.test(s.Website)?s.Website:'https://'+s.Website)+'" target="_blank" rel="noopener">'+esc(s.Website)+'</a></span>':'')+
+      (s['Sample Dept Email']?'<span>'+ic('mail')+' <a href="mailto:'+esc(s['Sample Dept Email'])+'">'+esc(s['Sample Dept Email'])+'</a> <span class="subtle">(sample dept)</span></span>':'')+
+      (s.Username?'<span>'+ic('user')+' '+esc(s.Username)+' <button class="copybtn" onclick="copyTxt(this.dataset.v)" data-v="'+esc(s.Username)+'">copy</button></span>':'')+
+      '</div>'+
+      (rr.length?'<div class="replist">'+rr.map(r=>'<div class="reprow"><b>'+esc(r.Name||'—')+'</b>'+
+        (r['Product Line']?'<span class="pl">'+esc(r['Product Line'])+'</span>':'')+
+        (r.Email?'<a href="mailto:'+esc(r.Email)+'">'+esc(r.Email)+'</a>':'')+
+        (r.Phone?'<a href="tel:'+esc(r.Phone)+'">'+esc(r.Phone)+'</a>':'')+
+        (r.Notes?'<span class="subtle">'+esc(r.Notes)+'</span>':'')+'</div>').join('')+'</div>':'')+
+      (s.Notes?'<div class="hint">'+esc(s.Notes)+'</div>':'')+'</div>';
+  });
+  document.getElementById('sp-list').innerHTML=h;
+}
+function copyTxt(t){navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>toast('Copied'));}
+
+/* supplier modal (edit or create) */
+let editSupId=null, repDraft=[];
+function openSupplier(sid){
+  editSupId=sid;
+  const s=sid?SUP[sid]:{Name:'',Website:'',Username:'','Sample Dept Email':'',Notes:''};
+  repDraft=(sid?(REPSBYSUP[sid]||[]):[]).map(r=>({...r}));
+  if(!repDraft.length)repDraft.push(blankRep());
+  renderSupplierModal(s);
+  document.getElementById('ov-supplier').classList.add('open');
+}
+function blankRep(){return {ID:'',Name:'',Email:'',Phone:'','Product Line':'',Notes:'',_new:true};}
+function renderSupplierModal(s){
+  s=s||readSupForm();
+  let h='<button class="close" onclick="closeOv(\'ov-supplier\')">'+ic('x')+'</button>'+
+    '<h2>'+(editSupId?'Edit supplier':'New supplier')+'</h2>'+
+    '<div class="hint">Tip: a dedicated <b>sample department email</b> is always more reliable than a rep\'s inbox — record both when you can.</div>'+
+    '<div class="fields">'+
+    '<div><label>Supplier name</label><input id="sf-name" value="'+esc(s.Name)+'"></div>'+
+    '<div><label>Website</label><input id="sf-web" value="'+esc(s.Website)+'" placeholder="shawcontract.com"></div>'+
+    '<div><label>Portal username</label><input id="sf-user" value="'+esc(s.Username)+'"><div class="subtle" style="margin-top:3px">Keep the password in your password manager.</div></div>'+
+    '<div><label>Sample dept email</label><input id="sf-semail" value="'+esc(s['Sample Dept Email'])+'"></div></div>'+
+    '<label>Notes (account #s, shipping quirks, portal info…)</label><textarea id="sf-notes" rows="2">'+esc(s.Notes)+'</textarea>'+
+    '<hr class="soft"><h3 style="font-size:15px">Reps <span class="subtle">— one per product line if needed (e.g. carpet vs. LVT)</span></h3>';
+  repDraft.forEach((r,i)=>{
+    h+='<div class="linecard"><div class="fields">'+
+      '<div><label>Name</label><input id="rf-name-'+i+'" value="'+esc(r.Name)+'"></div>'+
+      '<div><label>Product line</label><input id="rf-pl-'+i+'" value="'+esc(r['Product Line'])+'" placeholder="Carpet / LVT / …"></div>'+
+      '<div><label>Email</label><input id="rf-email-'+i+'" value="'+esc(r.Email)+'"></div>'+
+      '<div><label>Phone</label><input id="rf-phone-'+i+'" value="'+esc(r.Phone)+'"></div></div>'+
+      '<div style="margin-top:6px;display:flex;justify-content:space-between;align-items:center;gap:8px">'+
+      '<input id="rf-notes-'+i+'" placeholder="Rep notes" value="'+esc(r.Notes)+'" style="max-width:70%">'+
+      '<button class="btn sm danger" onclick="removeRepDraft('+i+')">Remove</button></div></div>';
+  });
+  h+='<button class="btn sm ghost" onclick="addRepDraft()">'+ic('plus')+' Add another rep</button>'+
+     '<hr class="soft"><button class="btn" onclick="submitSupplier()">Save supplier</button>';
+  document.getElementById('md-supplier').innerHTML=h;
+}
+function readSupForm(){
+  return {Name:val('sf-name'),Website:val('sf-web'),Username:val('sf-user'),'Sample Dept Email':val('sf-semail'),Notes:val('sf-notes')};
+}
+function val(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+function syncRepDraft(){
+  repDraft.forEach((r,i)=>{r.Name=val('rf-name-'+i);r['Product Line']=val('rf-pl-'+i);r.Email=val('rf-email-'+i);r.Phone=val('rf-phone-'+i);r.Notes=val('rf-notes-'+i);});
+}
+function addRepDraft(){syncRepDraft();repDraft.push(blankRep());renderSupplierModal();}
+function removeRepDraft(i){
+  syncRepDraft();
+  const r=repDraft[i];
+  if(r.ID&&!r._new){if(!confirm('Remove this rep from the supplier?'))return;removeThing('rep',r.ID);}
+  repDraft.splice(i,1);if(!repDraft.length)repDraft.push(blankRep());
+  renderSupplierModal();
+}
+function submitSupplier(){
+  const s=readSupForm();
+  if(!s.Name){toast('The supplier needs a name',true);return;}
+  syncRepDraft();
+  if(editSupId){Object.assign(SUP[editSupId],s);saveSupplier(SUP[editSupId],'Supplier saved');}
+  else{const sup={ID:newId('S'),...s,Created:today()};editSupId=sup.ID;saveSupplier(sup,'Supplier added');}
+  repDraft.forEach(r=>{
+    if(!(r.Name||r.Email||r.Phone))return;
+    if(r._new||!r.ID){r.ID=newId('R');delete r._new;r['Supplier ID']=editSupId;DB.reps.push(r);index();persist('saveRep',r);}
+    else{r['Supplier ID']=editSupId;saveRep(r);}
+  });
+  closeOv('ov-supplier');
+  if(document.getElementById('ov-project').classList.contains('open'))renderProjectModal();
+}
+
+/* ============================== boot =============================== */
+function boot(isReload){
+  if(isReload)document.getElementById('loader').style.display='flex';
+  if(API_URL.indexOf('PASTE_')===0){
+    document.getElementById('loader').innerHTML='<div class="empty" style="max-width:420px"><b>Almost there.</b><br>Open index.html and paste your Apps Script /exec URL and token into the CONFIGURE ME block at the top of the script.</div>';
+    return;
+  }
+  apiGet().then(data=>{
+    DB=data;index();refreshFilters();
+    document.getElementById('loader').style.display='none';
+    render();
+    if(isReload)toast('Data refreshed');
+  }).catch(e=>{
+    document.getElementById('loader').innerHTML='<div class="empty" style="max-width:420px">Could not load data — '+esc(e.message)+'<br><br><button class="btn" onclick="boot(true)">Try again</button></div>';
+  });
+}
+/* Esc closes any open modal */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.querySelectorAll('.overlay.open').forEach(o=>closeOv(o.id));
+});
+boot();
+</script>
+</body>
+</html>
