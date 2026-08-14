@@ -1,0 +1,15 @@
+# Internal working files — deliberately NOT published.
+# This repo is public and serves the app via GitHub Pages; only files
+# the site actually needs belong here.
+#
+#   CLAUDE.md  project notes for AI-assisted work. Also describes the
+#              app's security posture, which is not something to hand
+#              a casual reader of a public repo.
+#   Code.gs    reference copy of the Apps Script backend. The canonical
+#              copy lives in the Apps Script editor, not here, and
+#              publishing it exposes the backend logic for no benefit.
+CLAUDE.md
+Code.gs
+
+# scratch/preview files from local testing
+_*.html
