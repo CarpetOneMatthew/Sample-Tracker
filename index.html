@@ -510,6 +510,40 @@ label{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;font-weight:5
 .archbar .chev{width:13px;height:13px;flex:none;align-self:center;color:var(--ink3);
   transform:rotate(180deg);transition:transform .18s var(--ease)}
 .archbar.open .chev{transform:rotate(270deg)}
+/* ---- supplier tags: the lines a supplier carries ---------------- */
+/* Names, not status — so no dot and no colour, just a hairline chip
+   sitting under the supplier name. Tapping one searches for it; a chip
+   the current search matched goes solid, so you can see WHY a
+   distributor made the list. */
+.scard .head .tags{flex:1 1 100%;display:flex;flex-wrap:wrap;gap:4px;margin:1px 0 5px}
+.tag{display:inline-flex;align-items:center;gap:2px;background:transparent;border:1px solid var(--rule-strong);
+  border-radius:3px;padding:1px 7px;font-size:11.5px;font-weight:500;line-height:1.5;
+  letter-spacing:-.005em;color:var(--ink2)}
+button.tag:hover{background:#EFF3F4;color:var(--ink)}
+button.tag:active{transform:none}
+.tag.hit,.tag.hit:hover{background:var(--ink);border-color:var(--ink);color:#fff}
+/* the editor: chips inside something that looks and acts like an input */
+.tagedit{display:flex;flex-wrap:wrap;align-items:center;gap:4px;background:var(--paper);cursor:text;
+  border:1px solid var(--rule-strong);border-radius:3px;padding:4px 5px}
+/* the focus ring belongs to the whole field, as on any other input */
+.tagedit:focus-within{border-color:var(--ink);outline:2.5px solid var(--accent);outline-offset:2px}
+.tagedit input:focus-visible{outline:none}
+.tagedit .tag{background:#EFF3F4;border-color:var(--rule);color:var(--ink);padding:1px 1px 1px 7px}
+.tagedit input{border:none;background:transparent;padding:4px;width:auto;flex:1 1 140px;min-width:0}
+.tagx{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;padding:0;
+  background:none;color:var(--ink3);border-radius:2px}
+.tagx:hover{background:var(--alert-soft);color:var(--alert)}
+.tagx .icon{width:10px;height:10px}
+/* manufacturer leads the sample title, a step quieter than the product */
+.rowcard .title .mfr{font-weight:500;color:var(--ink2)}
+/* supplier modal footer: save on the left, delete well away on the right */
+.supfoot{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.supfoot .btn.danger{margin-left:auto}
+@media (max-width:720px){
+  .tag{padding:3px 9px;font-size:12px}
+  .tagedit .tag{padding:2px 2px 2px 8px}
+  .tagx{width:26px;height:26px}
+}
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
   .spin{animation:none}
@@ -610,7 +644,7 @@ label{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;font-weight:5
   <section id="view-suppliers" style="display:none">
     <div class="toolbar">
       <div class="searchwrap"><svg class="icon"><use href="#i-search"/></svg>
-        <input type="search" id="sp-q" placeholder="Search suppliers, reps, product lines…" oninput="sFilter.q=this.value;deb(renderSupplierList)">
+        <input type="search" id="sp-q" placeholder="Search suppliers, lines they carry, reps…" oninput="sFilter.q=this.value;deb(renderSupplierList)">
       </div>
       <button class="btn" onclick="openSupplier(null)"><svg class="icon"><use href="#i-plus"/></svg> Add supplier</button>
     </div>
@@ -703,6 +737,38 @@ function rep(id){return DB.reps.find(r=>r.ID===id);}
 function isExcluded(l){return !!(l.Exclude&&String(l.Exclude).trim());}
 function exReason(l){return isExcluded(l)?String(l.Exclude).trim():'';}
 
+/* A supplier's Tags cell is one comma-separated string — the lines it
+   carries ("Tarkett, Mondo, Altro"). Split here and nowhere else, so
+   the sheet stays hand-editable. Duplicates drop case-insensitively. */
+function parseTags(s){
+  const out=[];
+  String(s==null?'':s).split(',').forEach(t=>{t=t.trim();
+    if(t&&!out.some(x=>x.toLowerCase()===t.toLowerCase()))out.push(t);});
+  return out;
+}
+function supTags(s){return parseTags(s&&s.Tags);}
+/* Every line / manufacturer name already in use, most relevant first:
+   this supplier's tags, then what's been ordered through it, then
+   everything else. Feeds the autocomplete on both the tag editor and
+   the sample Manufacturer field, so "Altro" is spelled one way. */
+function knownNames(sid){
+  const out=[],seen={};
+  const add=t=>{t=String(t||'').trim();const k=t.toLowerCase();if(t&&!seen[k]){seen[k]=1;out.push(t);}};
+  if(sid){supTags(SUP[sid]).forEach(add);DB.lines.forEach(l=>{if(l['Supplier ID']===sid)add(l.Manufacturer);});}
+  DB.suppliers.forEach(s=>supTags(s).forEach(add));
+  DB.lines.forEach(l=>add(l.Manufacturer));
+  return out;
+}
+function nameOptions(names){return names.map(t=>'<option value="'+esc(t)+'">').join('');}
+/* Sample title. The manufacturer leads in a quieter weight — "Altro
+   Wood Safety" — unless the product name already starts with it. */
+function sampleTitle(l){
+  const m=String(l.Manufacturer||'').trim(),p=l.Product||'';
+  const lead=m&&p.toLowerCase().indexOf(m.toLowerCase())!==0;
+  return '<div class="title">'+(lead?'<span class="mfr">'+esc(m)+'</span> ':'')+esc(p||'(unnamed sample)')+
+    (l.SKU?' <span class="sku">'+esc(l.SKU)+'</span>':'')+'</div>';
+}
+
 function supStats(sid){
   const ls=DB.lines.filter(l=>l['Supplier ID']===sid);
   const sc=ls.filter(l=>!isExcluded(l));                 /* scoring set */
@@ -751,7 +817,14 @@ function removeThing(kind,id,msg){
   if(kind==='line')DB.lines=DB.lines.filter(l=>l.ID!==id);
   if(kind==='rep')DB.reps=DB.reps.filter(r=>r.ID!==id);
   if(kind==='project'){DB.lines=DB.lines.filter(l=>l['Project ID']!==id);DB.projects=DB.projects.filter(p=>p.ID!==id);}
-  index();persist('delete',{kind,id},msg);
+  /* only ever reached for a supplier with no samples; its reps go too,
+     and any filter still pointing at it lets go */
+  if(kind==='supplier'){
+    DB.suppliers=DB.suppliers.filter(s=>s.ID!==id);DB.reps=DB.reps.filter(r=>r['Supplier ID']!==id);
+    if(tFilter.sup===id)tFilter.sup='';if(pFilter.sup===id)pFilter.sup='';if(rState.sup===id)rState.sup=null;
+  }
+  index();if(kind==='supplier')refreshFilters();
+  persist('delete',{kind,id},msg);
 }
 function newId(p){return p+Date.now()+'_'+Math.floor(Math.random()*10000);}
 
@@ -801,7 +874,7 @@ function lineRow(l,inModal){
   if(l.Status==='Delivered')when='<span class="subtle">delivered '+nice(l['Date Delivered'])+'</span>';
   const contact=r&&r.Email?('<a href="mailto:'+esc(r.Email)+'">'+esc(r.Name||r.Email)+'</a>'):(s['Sample Dept Email']?'<a href="mailto:'+esc(s['Sample Dept Email'])+'">sample dept</a>':'');
   return '<div class="rowcard s-'+l.Status+(od?' overdue':'')+'">'+
-    '<div class="grow"><div class="title">'+esc(l.Product||'(unnamed sample)')+(l.SKU?' <span class="sku">'+esc(l.SKU)+'</span>':'')+'</div>'+
+    '<div class="grow">'+sampleTitle(l)+
     '<div class="meta">'+esc(s.Name||'—')+(contact?' · '+contact:'')+' · <a href="#" onclick="openProject(\''+l['Project ID']+'\');return false">'+esc(p['Project Name']||'—')+'</a> · ordered '+nice(l['Date Ordered'])+'</div></div>'+
     '<div>'+when+'</div><span class="pill '+l.Status+'">'+l.Status+'</span>'+
     (l.Status==='Ordered'?'<button class="btn sm" onclick="askAccuracy([\''+l.ID+'\'])">'+ic('box')+' Receive</button>':'')+
@@ -845,7 +918,7 @@ function renderTodayLists(){
   const f=l=>{
     if(tFilter.sup&&l['Supplier ID']!==tFilter.sup)return false;
     if(tFilter.q){const q=tFilter.q.toLowerCase();const p=PROJ[l['Project ID']]||{},s=SUP[l['Supplier ID']]||{};
-      if(!((l.Product||'')+(l.SKU||'')+(p['Project Name']||'')+(s.Name||'')).toLowerCase().includes(q))return false;}
+      if(!((l.Product||'')+' '+(l.Manufacturer||'')+' '+(l.SKU||'')+' '+(p['Project Name']||'')+' '+(s.Name||'')).toLowerCase().includes(q))return false;}
     return true;
   };
   const srt=(a,b)=>{
@@ -917,7 +990,7 @@ function renderReceiveSupplier(el,open){
   ls.forEach(l=>{
     const p=PROJ[l['Project ID']]||{};const od=isOverdue(l);
     h+='<div class="rowcard recvrow s-Ordered'+(od?' overdue':'')+'">'+
-      '<div class="grow"><div class="title">'+esc(l.Product||'(unnamed sample)')+(l.SKU?' <span class="sku">'+esc(l.SKU)+'</span>':'')+'</div>'+
+      '<div class="grow">'+sampleTitle(l)+
       '<div class="meta">'+esc(p['Project Name']||'—')+' · ordered '+nice(l['Date Ordered'])+(l['Expected Arrival']?(od?' · <span class="pill late">'+dDiff(l['Expected Arrival'],today())+'d late</span>':' · expected '+nice(l['Expected Arrival'])):'')+'</div></div>'+
       '<button class="btn sm" onclick="askAccuracy([\''+l.ID+'\'])">'+ic('box')+' Receive</button></div>';
   });
@@ -929,7 +1002,7 @@ function receivedNowBlock(){
   if(!ls.length)return'';
   return '<div class="sect" style="margin-top:26px"><h2>Received just now<span class="count">'+ls.length+'</span></h2>'+
     ls.map(l=>{const s=SUP[l['Supplier ID']]||{};const p=PROJ[l['Project ID']]||{};
-      return '<div class="rowcard justnow s-Arrived"><div class="grow"><div class="title">'+esc(l.Product||'')+'</div>'+
+      return '<div class="rowcard justnow s-Arrived"><div class="grow">'+sampleTitle(l)+
       '<div class="meta">'+esc(s.Name||'')+' · '+esc(p['Project Name']||'')+'</div></div>'+
       (l.Accuracy&&l.Accuracy!=='Correct'?'<span class="pill warn">'+esc(l.Accuracy)+'</span>':'')+
       '<span class="pill Arrived">Arrived</span></div>';}).join('')+'</div>';
@@ -993,7 +1066,7 @@ function renderProjectList(){
     const ls=LINESBYPROJ[p.ID]||[];
     if(pFilter.sup&&!ls.some(l=>l['Supplier ID']===pFilter.sup))return false;
     if(pFilter.q){const q=pFilter.q.toLowerCase();
-      const blob=(p['Project Name']||'')+(p.Client||'')+ls.map(l=>(l.Product||'')+(l.SKU||'')).join('');
+      const blob=(p['Project Name']||'')+' '+(p.Client||'')+' '+ls.map(l=>(l.Product||'')+' '+(l.Manufacturer||'')+' '+(l.SKU||'')).join(' ');
       if(!blob.toLowerCase().includes(q))return false;}
     return true;
   }).sort((a,b)=>(a['Needed By']||'9999')<(b['Needed By']||'9999')?-1:1);
@@ -1104,6 +1177,8 @@ function addLineForm(idp){
       [...DB.suppliers].sort((a,b)=>a.Name.localeCompare(b.Name)).map(s=>'<option value="'+s.ID+'">'+esc(s.Name)+'</option>').join('')+'</select>'+
       '<div class="subtle" style="margin-top:3px"><a href="#" onclick="openSupplier(null);return false">+ new supplier</a></div></div>'+
     '<div><label>Rep</label><select id="'+idp+'-rep"><option value="">—</option></select></div>'+
+    '<div><label for="'+idp+'-mfr">Manufacturer</label><input id="'+idp+'-mfr" list="'+idp+'-mfr-list" placeholder="e.g. Altro">'+
+      '<datalist id="'+idp+'-mfr-list">'+nameOptions(knownNames(''))+'</datalist></div>'+
     '<div><label>Product</label><input id="'+idp+'-prod" placeholder="e.g. Quiet Cover LVT"></div>'+
     '<div><label>SKU / colour</label><input id="'+idp+'-sku"></div>'+
     '<div><label>Date ordered</label><input type="date" id="'+idp+'-date" value="'+today()+'" onchange="lineSupChanged(\''+idp+'\')"></div>'+
@@ -1123,6 +1198,7 @@ function cancelEditLine(){editLineId=null;renderProjectModal();}
 function fillLineForm(){
   const l=DB.lines.find(x=>x.ID===editLineId);if(!l)return;
   document.getElementById('al-prod').value=l.Product;
+  document.getElementById('al-mfr').value=l.Manufacturer||'';
   document.getElementById('al-sku').value=l.SKU;
   document.getElementById('al-date').value=l['Date Ordered'];
   document.getElementById('al-notes').value=l.Notes;
@@ -1133,6 +1209,8 @@ function fillLineForm(){
 }
 function lineSupChanged(idp){
   const sid=document.getElementById(idp+'-sup').value;
+  /* what this supplier carries moves to the top of the suggestions */
+  document.getElementById(idp+'-mfr-list').innerHTML=nameOptions(knownNames(sid));
   const repSel=document.getElementById(idp+'-rep');
   const rr=REPSBYSUP[sid]||[];
   repSel.innerHTML='<option value="">—</option>'+rr.map(r=>'<option value="'+r.ID+'">'+esc(r.Name||r.Email)+(r['Product Line']?' · '+esc(r['Product Line']):'')+'</option>').join('');
@@ -1152,7 +1230,8 @@ function readLineForm(idp){
   const od=document.getElementById(idp+'-date').value||today();
   const st=supStats(sid);
   return {ID:newId('L'),'Project ID':openProjectId,'Supplier ID':sid,'Rep ID':document.getElementById(idp+'-rep').value,
-    Product:document.getElementById(idp+'-prod').value.trim(),SKU:document.getElementById(idp+'-sku').value.trim(),
+    Product:document.getElementById(idp+'-prod').value.trim(),Manufacturer:document.getElementById(idp+'-mfr').value.trim(),
+    SKU:document.getElementById(idp+'-sku').value.trim(),
     'Date Ordered':od,'Expected Arrival':st.median!=null?addDays(od,st.median):'',
     Status:'Ordered',Accuracy:'','Date Arrived':'','Date Delivered':'',Notes:document.getElementById(idp+'-notes').value.trim()};
 }
@@ -1164,7 +1243,8 @@ function submitLine(){
     const prod=document.getElementById('al-prod').value.trim();
     if(!prod){toast('Give the sample a product name',true);return;}
     l['Supplier ID']=sid;l['Rep ID']=document.getElementById('al-rep').value;
-    l.Product=prod;l.SKU=document.getElementById('al-sku').value.trim();
+    l.Product=prod;l.Manufacturer=document.getElementById('al-mfr').value.trim();
+    l.SKU=document.getElementById('al-sku').value.trim();
     l['Date Ordered']=document.getElementById('al-date').value||l['Date Ordered'];
     l['Expected Arrival']=document.getElementById('al-eta-input').value;
     l.Notes=document.getElementById('al-notes').value.trim();
@@ -1179,7 +1259,7 @@ function submitLine(){
 function duplicateLine(id){
   const l=DB.lines.find(x=>x.ID===id);if(!l)return;
   editLineId=null;
-  prefillLine={sup:l['Supplier ID'],rep:l['Rep ID'],prod:l.Product,sku:l.SKU,notes:l.Notes};
+  prefillLine={sup:l['Supplier ID'],rep:l['Rep ID'],prod:l.Product,mfr:l.Manufacturer||'',sku:l.SKU,notes:l.Notes};
   renderProjectModal();
   document.getElementById('al-sup').scrollIntoView({behavior:'smooth'});
   toast('Copied — tweak and add');
@@ -1188,7 +1268,8 @@ function applyPrefill(){
   const f=prefillLine;prefillLine=null;
   document.getElementById('al-sup').value=f.sup;lineSupChanged('al');
   document.getElementById('al-rep').value=f.rep;
-  document.getElementById('al-prod').value=f.prod;document.getElementById('al-sku').value=f.sku;
+  document.getElementById('al-prod').value=f.prod;document.getElementById('al-mfr').value=f.mfr;
+  document.getElementById('al-sku').value=f.sku;
   document.getElementById('al-notes').value=f.notes;
 }
 
@@ -1219,7 +1300,8 @@ function submitNewProject(){
     const od=document.getElementById('np1-date').value||today();
     const st=supStats(sid);
     saveLine({ID:newId('L'),'Project ID':p.ID,'Supplier ID':sid,'Rep ID':document.getElementById('np1-rep').value,
-      Product:document.getElementById('np1-prod').value.trim(),SKU:document.getElementById('np1-sku').value.trim(),
+      Product:document.getElementById('np1-prod').value.trim(),Manufacturer:document.getElementById('np1-mfr').value.trim(),
+      SKU:document.getElementById('np1-sku').value.trim(),
       'Date Ordered':od,'Expected Arrival':st.median!=null?addDays(od,st.median):'',
       Status:'Ordered',Accuracy:'','Date Arrived':'','Date Delivered':'',Notes:document.getElementById('np1-notes').value.trim()});
   }
@@ -1239,16 +1321,21 @@ function accBadge(st){
 }
 function renderSupplierList(){
   let h='';
+  const q=sFilter.q.trim().toLowerCase();
   const list=[...DB.suppliers].sort((a,b)=>a.Name.localeCompare(b.Name)).filter(s=>{
-    if(!sFilter.q)return true;const q=sFilter.q.toLowerCase();
+    if(!q)return true;
     const rr=(REPSBYSUP[s.ID]||[]).map(r=>(r.Name||'')+(r['Product Line']||'')+(r.Email||'')).join('');
-    return (s.Name+rr+(s.Notes||'')).toLowerCase().includes(q);
+    return (s.Name+rr+(s.Notes||'')+' '+supTags(s).join(' ')).toLowerCase().includes(q);
   });
   if(!list.length)h='<div class="empty">No suppliers match.</div>';
   list.forEach(s=>{
     const st=supStats(s.ID);
     const rr=REPSBYSUP[s.ID]||[];
-    h+='<div class="scard"><div class="head"><h3>'+esc(s.Name)+'</h3>'+speedBadge(st)+accBadge(st)+
+    const tags=supTags(s);
+    h+='<div class="scard"><div class="head"><h3>'+esc(s.Name)+'</h3>'+
+      (tags.length?'<div class="tags">'+tags.map(t=>'<button class="tag'+(q&&t.toLowerCase().includes(q)?' hit':'')+'" '+
+        'data-t="'+esc(t)+'" onclick="tagSearch(this.dataset.t)" title="Every supplier that carries '+esc(t)+'">'+esc(t)+'</button>').join('')+'</div>':'')+
+      speedBadge(st)+accBadge(st)+
       '<button class="btn sm ghost" onclick="openHistory(\''+s.ID+'\')">'+ic('clock')+' History <span class="subtle">('+st.total+')</span></button>'+
       '<button class="btn sm ghost" onclick="openSupplier(\''+s.ID+'\')">'+ic('edit')+' Edit</button></div>'+
       '<div class="kvs">'+
@@ -1266,12 +1353,18 @@ function renderSupplierList(){
   document.getElementById('sp-list').innerHTML=h;
 }
 function copyTxt(t){navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>toast('Copied'));}
+/* tap a tag -> every supplier that carries that line */
+function tagSearch(t){
+  sFilter.q=t;document.getElementById('sp-q').value=t;
+  renderSupplierList();window.scrollTo({top:0,behavior:'smooth'});
+}
 
 /* supplier modal (edit or create) */
-let editSupId=null, repDraft=[];
+let editSupId=null, repDraft=[], tagDraft=[];
 function openSupplier(sid){
   editSupId=sid;
   const s=sid?SUP[sid]:{Name:'',Website:'',Username:'','Sample Dept Email':'',Notes:''};
+  tagDraft=supTags(s);
   repDraft=(sid?(REPSBYSUP[sid]||[]):[]).map(r=>({...r}));
   if(!repDraft.length)repDraft.push(blankRep());
   renderSupplierModal(s);
@@ -1288,6 +1381,9 @@ function renderSupplierModal(s){
     '<div><label>Website</label><input id="sf-web" value="'+esc(s.Website)+'" placeholder="shawcontract.com"></div>'+
     '<div><label>Portal username</label><input id="sf-user" value="'+esc(s.Username)+'"><div class="subtle" style="margin-top:3px">Keep the password in your password manager.</div></div>'+
     '<div><label>Sample dept email</label><input id="sf-semail" value="'+esc(s['Sample Dept Email'])+'"></div></div>'+
+    '<label for="sf-tag-in">Tags <span class="subtle">— the lines this supplier carries</span></label>'+
+    '<div id="sf-tags">'+tagField()+'</div>'+
+    '<div class="subtle" style="margin-top:3px">Enter or a comma after each. Search any of them from the Suppliers list.</div>'+
     '<label>Notes (account #s, shipping quirks, portal info…)</label><textarea id="sf-notes" rows="2">'+esc(s.Notes)+'</textarea>'+
     '<hr class="soft"><h3 style="font-size:15px">Reps <span class="subtle">— one per product line if needed (e.g. carpet vs. LVT)</span></h3>';
   repDraft.forEach((r,i)=>{
@@ -1301,11 +1397,81 @@ function renderSupplierModal(s){
       '<button class="btn sm danger" onclick="removeRepDraft('+i+')">Remove</button></div></div>';
   });
   h+='<button class="btn sm ghost" onclick="addRepDraft()">'+ic('plus')+' Add another rep</button>'+
-     '<hr class="soft"><button class="btn" onclick="submitSupplier()">Save supplier</button>';
+     '<hr class="soft"><div class="supfoot"><button class="btn" onclick="submitSupplier()">Save supplier</button>'+
+     (editSupId?'<button class="btn sm danger" onclick="delSupplier()">'+ic('trash')+' Delete supplier</button>':'')+'</div>';
   document.getElementById('md-supplier').innerHTML=h;
 }
 function readSupForm(){
-  return {Name:val('sf-name'),Website:val('sf-web'),Username:val('sf-user'),'Sample Dept Email':val('sf-semail'),Notes:val('sf-notes')};
+  const pend=document.getElementById('sf-tag-in');     /* typed but never committed still counts */
+  if(pend){addTags(pend.value);pend.value='';}
+  return {Name:val('sf-name'),Website:val('sf-web'),Username:val('sf-user'),'Sample Dept Email':val('sf-semail'),Notes:val('sf-notes'),
+    Tags:tagDraft.join(', ')};
+}
+/* Tag editor. Enter or a comma turns what's typed into a chip, and so
+   does picking a suggestion; Backspace in an empty field takes the last
+   chip back to fix. Text still sitting in the field when you save is
+   kept, so a tag is never lost for want of pressing Enter. */
+function tagField(){
+  return '<div class="tagedit" onclick="if(event.target===this)document.getElementById(\'sf-tag-in\').focus()">'+
+    tagDraft.map((t,i)=>'<span class="tag">'+esc(t)+'<button type="button" class="tagx" aria-label="Remove '+esc(t)+'" '+
+      'onmousedown="event.preventDefault()" onclick="dropTag('+i+')">'+ic('x')+'</button></span>').join('')+
+    '<input id="sf-tag-in" list="sf-tag-list" placeholder="'+(tagDraft.length?'Add another…':'e.g. Tarkett, Mondo, Altro')+'" '+
+      'oninput="tagInput(event)" onkeydown="tagKey(event)" onblur="tagBlur()"></div>'+
+    '<datalist id="sf-tag-list">'+nameOptions(knownNames(editSupId).filter(t=>!hasTag(t)))+'</datalist>';
+}
+function hasTag(t){return tagDraft.some(x=>x.toLowerCase()===t.toLowerCase());}
+function addTags(txt){parseTags(txt).forEach(t=>{if(!hasTag(t))tagDraft.push(t);});}
+/* redraws just the tag field; pass text to leave in it (and focus it).
+   Swapping out a focused input fires blur — tagRedraw stops that blur
+   committing the half-typed text as a tag. */
+let tagRedraw=false;
+function drawTags(keep){
+  tagRedraw=true;
+  document.getElementById('sf-tags').innerHTML=tagField();
+  tagRedraw=false;
+  const el=document.getElementById('sf-tag-in');
+  if(keep!=null){el.value=keep;el.focus();}
+}
+function tagInput(e){
+  const v=e.target.value;
+  if(v.indexOf(',')!==-1){                              /* typed or pasted a comma */
+    const parts=v.split(','),rest=parts.pop();
+    addTags(parts.join(','));drawTags(rest.trimStart());
+  }else if((!e.inputType||e.inputType==='insertReplacementText')&&
+           knownNames('').some(t=>t.toLowerCase()===v.trim().toLowerCase())){
+    addTags(v);drawTags('');                            /* picked from the suggestions */
+  }
+}
+function tagKey(e){
+  const el=e.target;
+  if(e.key==='Enter'){e.preventDefault();if(el.value.trim()){addTags(el.value);drawTags('');}}
+  else if(e.key==='Backspace'&&!el.value&&tagDraft.length){e.preventDefault();drawTags(tagDraft.pop());}
+}
+function tagBlur(){
+  if(tagRedraw)return;
+  const el=document.getElementById('sf-tag-in');
+  if(el&&el.value.trim()){addTags(el.value);drawTags();}
+}
+function dropTag(i){
+  const pend=document.getElementById('sf-tag-in').value;
+  tagDraft.splice(i,1);drawTags(pend);
+}
+/* Delete is for suppliers added by mistake. One with samples on record
+   stays — those samples are project history and the supplier's scoring.
+   The server re-checks, so a page that's out of date can't get round it. */
+function delSupplier(){
+  const s=SUP[editSupId];if(!s)return;
+  const n=DB.lines.filter(l=>l['Supplier ID']===s.ID).length;
+  if(n){
+    alert(s.Name+' has '+n+' sample'+(n>1?'s':'')+' on record, so it can’t be deleted.\n\n'+
+      'If it’s a duplicate: open its History, Edit each sample and switch the Supplier to the right one. Once it has none left, you can delete it.');
+    return;
+  }
+  const nr=(REPSBYSUP[s.ID]||[]).length;
+  if(!confirm('Delete '+s.Name+(nr?' and its '+nr+' rep'+(nr>1?'s':''):'')+'? This can’t be undone.'))return;
+  removeThing('supplier',s.ID,'Supplier deleted');
+  editSupId=null;closeOv('ov-supplier');
+  if(document.getElementById('ov-project').classList.contains('open'))renderProjectModal();
 }
 function val(id){const e=document.getElementById(id);return e?e.value.trim():'';}
 function syncRepDraft(){
@@ -1414,7 +1580,7 @@ function histLines(){
   if(histFilter.q){
     const q=histFilter.q.toLowerCase();
     ls=ls.filter(l=>{const p=PROJ[l['Project ID']]||{};const r=rep(l['Rep ID'])||{};
-      return ((l.Product||'')+' '+(l.SKU||'')+' '+(l.Notes||'')+' '+(p['Project Name']||'')+' '+(p.Client||'')+' '+(r.Name||''))
+      return ((l.Product||'')+' '+(l.Manufacturer||'')+' '+(l.SKU||'')+' '+(l.Notes||'')+' '+(p['Project Name']||'')+' '+(p.Client||'')+' '+(r.Name||''))
         .toLowerCase().includes(q);});
   }
   return ls.sort((a,b)=>(b['Date Ordered']||'').localeCompare(a['Date Ordered']||''));
@@ -1487,8 +1653,7 @@ function histRow(l){
   if(l['Date Delivered']) dates+=' → handed off '+nice(l['Date Delivered']);
 
   return '<div class="rowcard s-'+esc(l.Status)+(od&&!ex?' overdue':'')+(ex?' excluded':'')+'">'+
-    '<div class="grow">'+
-      '<div class="title">'+esc(l.Product||'(unnamed sample)')+(l.SKU?' <span class="sku">'+esc(l.SKU)+'</span>':'')+'</div>'+
+    '<div class="grow">'+sampleTitle(l)+
       '<div class="meta">'+esc(p['Project Name']||'(project deleted)')+
         (p.Client?' · '+esc(p.Client):'')+(r&&r.Name?' · rep '+esc(r.Name):'')+'</div>'+
       '<div class="meta">'+esc(dates)+'</div>'+
@@ -1542,6 +1707,8 @@ function histEditor(l){
       '<div><label>SKU / colour</label><input id="he-sku" value="'+esc(l.SKU)+'"></div>'+
       '<div><label>Project</label><select id="he-proj">'+projOpts+'</select></div>'+
       '<div><label>Supplier</label><select id="he-sup">'+supOpts+'</select></div>'+
+      '<div><label for="he-mfr">Manufacturer</label><input id="he-mfr" list="he-mfr-list" value="'+esc(l.Manufacturer)+'">'+
+        '<datalist id="he-mfr-list">'+nameOptions(knownNames(l['Supplier ID']))+'</datalist></div>'+
       '<div><label>Rep</label><select id="he-rep">'+repOpts+'</select></div>'+
       '<div><label>Status</label><select id="he-stat">'+statOpts+'</select></div>'+
       '<div><label>Date ordered</label><input type="date" id="he-ord" value="'+esc(l['Date Ordered'])+'"></div>'+
@@ -1583,6 +1750,7 @@ function histSave(){
   if(arr&&del&&del<arr){toast('Hand-off cannot be before arrival',true);return;}
 
   l.Product=prod;
+  l.Manufacturer=val('he-mfr');
   l.SKU=val('he-sku');
   l['Project ID']=document.getElementById('he-proj').value;
   l['Supplier ID']=document.getElementById('he-sup').value;
