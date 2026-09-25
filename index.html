@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>RDCO Sample Tracker</title>
 <meta name="theme-color" content="#F7FAFB">
-<link rel="preload" as="image" href="background.webp" fetchpriority="high">
+<!-- desktop only: on a phone the working surface covers the photo -->
+<link rel="preload" as="image" href="background.webp" fetchpriority="high" media="(min-width:721px)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -74,9 +75,6 @@ body::before{
 body::after{
   content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   background:linear-gradient(180deg,rgba(250,252,252,.34) 0%,rgba(250,252,252,.20) 34%,rgba(250,252,252,.42) 100%);
-}
-@media(max-width:720px){
-  body::before{background-image:url('background-sm.webp')}
 }
 h1,h2,h3{font-family:var(--display);font-weight:600;letter-spacing:-.021em;color:var(--ink);line-height:1.16}
 a{color:var(--accent);text-decoration:none}
@@ -544,6 +542,78 @@ button.tag:active{transform:none}
   .tagedit .tag{padding:2px 2px 2px 8px}
   .tagx{width:26px;height:26px}
 }
+/* ---- Vista leftovers the flat layer never reached --------------- */
+/* Each of these shipped in the original card theme's radii, shadows or
+   colours because nothing below the FLAT LAYER banner overrode it. */
+.thread{height:3px;background:var(--rule);border-radius:0;margin:12px 0 6px}
+.thread i,.thread i.done{border-radius:0}
+.thread i{background:var(--ink)}          /* progress is data, not an action: no teal, no gradient */
+.thread i.done{background:var(--good)}
+.btn.sm{border-radius:var(--radius-sm)}      /* Vista's .btn.sm (9px) outranked the flat .btn */
+.acc-opts .btn{border-radius:var(--radius);font-size:13.5px;font-weight:500;padding:12px 14px;min-height:48px}
+.copybtn{border-radius:var(--radius-sm);background:transparent;border:1px solid var(--rule-strong);font-weight:500}
+.copybtn:hover{background:#EFF3F4;color:var(--ink)}
+.backlink{border-radius:var(--radius-sm);font-size:12.5px}
+.backlink:hover{background:#EFF3F4}
+.boxcard .bicon{border-radius:var(--radius-sm);width:32px;height:32px}
+.modal .close{border-radius:var(--radius-sm);background:transparent;color:var(--ink3);width:32px;height:32px}
+.modal .close:hover{background:#EFF3F4;color:var(--ink)}
+.modal:focus{outline:none}
+.overlay,.modal{overscroll-behavior:contain}   /* scrolling a sheet never drags the page behind it */
+.reprow .tag{font-size:11px}
+.mono{font-family:var(--mono)}
+/* ---- toast ------------------------------------------------------ */
+/* Above the loader (99 -> 101) so a failed save is always readable;
+   flat; clear of the phone tab bar; tappable only when it has Undo. */
+#toast{z-index:101;border-radius:var(--radius);box-shadow:none;display:flex;align-items:center;gap:14px;
+  width:max-content;max-width:calc(100vw - 32px);padding:10px 16px;font-size:12.5px;line-height:1.4}
+#toast.act{pointer-events:auto;padding:6px 6px 6px 16px}
+#toast .tundo{background:none;border:1px solid rgba(255,255,255,.35);border-radius:var(--radius-sm);color:#fff;
+  padding:5px 12px;font-size:12px;font-weight:600;flex:none}
+#toast .tundo:hover{background:rgba(255,255,255,.14)}
+/* ---- Today: compact empties, hand-off groups -------------------- */
+.emptyrow{padding:9px 4px;border-bottom:1px solid var(--rule);color:var(--ink3);font-size:12px}
+.emptyrow b{color:var(--ink2);font-weight:600}
+.grouphead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 4px 7px;border-bottom:1px solid var(--rule)}
+.grouphead .grow{flex:1;min-width:180px;font-size:12.5px;font-weight:600}
+.grouphead .subtle{font-weight:400}
+.group .rowcard{padding-left:16px}
+/* ---- windows ---------------------------------------------------- */
+.projfoot{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.projfoot .btn.danger{margin-left:auto}
+#sf-dup{color:var(--wait);margin-top:3px}
+.mergebox{margin-top:16px;padding-top:10px;border-top:1px solid var(--rule)}
+.mergebox summary{cursor:pointer;font-size:12px;font-weight:500;color:var(--ink2)}
+.mergebox summary:hover{color:var(--ink)}
+.mergebox p{margin:6px 0 0}
+.mergerow{display:flex;gap:8px;margin-top:8px;align-items:center}
+.mergerow select{flex:1;min-width:0}
+/* the in-app dialog (ask): above any other window, centred on desktop */
+#ov-dlg{z-index:60;align-items:center}
+.modal.dlg{max-width:430px}
+.dlgtext{color:var(--ink2);font-size:13px;line-height:1.5;margin:8px 0 2px}
+.dlgfoot{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+/* ---- phone top bar: refresh + "Updated", which the hidden nav carries on desktop */
+.mobsync{display:none;margin-left:auto;align-items:center;gap:8px}
+.iconbtn{background:transparent;border:1px solid var(--rule-strong);border-radius:var(--radius-sm);color:var(--ink);
+  width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.iconbtn:hover{background:#EFF3F4}
+.refreshbtn.busy .icon{animation:sp .9s linear infinite}
+.refreshbtn:disabled{cursor:default}
+@media (max-width:720px){
+  /* one row with the logo: the label wraps to two short lines first */
+  .brand{flex-wrap:nowrap}
+  .brand .logo{min-width:0;flex:0 1 auto}
+  .mobsync{display:flex}
+  .mobsync .synced{font-size:10px;color:var(--ink3);text-align:right;line-height:1.25;max-width:92px}
+  #toast{bottom:calc(74px + env(safe-area-inset-bottom))}
+  #ov-dlg{align-items:flex-end}
+  /* the working surface covers the whole screen here, so the photo
+     can't be seen — don't fetch or paint it */
+  body{background:var(--sheet)}
+  body::before,body::after{display:none}
+}
+@media (max-width:360px){.mobsync .synced{display:none}}
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
   .spin{animation:none}
@@ -588,6 +658,11 @@ button.tag:active{transform:none}
          an image alt is not a heading, and this is the page's only h1 -->
     <h1 class="sr-only">Sample Tracker</h1>
     <span class="sub">Commercial</span>
+    <!-- phones only: the nav that carries these on desktop is hidden -->
+    <div class="mobsync">
+      <span class="synced"></span>
+      <button class="iconbtn refreshbtn" title="Reload data" aria-label="Reload data" onclick="refreshNow()"><svg class="icon"><use href="#i-refresh"/></svg></button>
+    </div>
   </div>
   <nav class="nav">
     <button id="nav-today" class="vbtn on" onclick="show('today')"><svg class="icon"><use href="#i-home"/></svg>Today<span class="cnt" id="badge-today" style="display:none"></span></button>
@@ -597,7 +672,7 @@ button.tag:active{transform:none}
     <span class="spacer"></span>
     <span class="synced" id="synced"></span>
     <button class="ghost" onclick="openNewProject()"><svg class="icon"><use href="#i-plus"/></svg> New project</button>
-    <button class="ghost" title="Reload data" aria-label="Reload data" onclick="boot(true)"><svg class="icon"><use href="#i-refresh"/></svg></button>
+    <button class="ghost refreshbtn" title="Reload data" aria-label="Reload data" onclick="refreshNow()"><svg class="icon"><use href="#i-refresh"/></svg></button>
   </nav>
 </header>
 
@@ -661,13 +736,15 @@ button.tag:active{transform:none}
 </nav>
 
 <!-- modals -->
-<div class="overlay" id="ov-project"><div class="modal" id="md-project"></div></div>
-<div class="overlay" id="ov-new"><div class="modal" id="md-new"></div></div>
-<div class="overlay" id="ov-supplier"><div class="modal" id="md-supplier"></div></div>
-<div class="overlay" id="ov-history"><div class="modal" id="md-history"></div></div>
-<div class="overlay" id="ov-acc"><div class="modal" style="max-width:430px" id="md-acc"></div></div>
+<div class="overlay" id="ov-project"><div class="modal" id="md-project" role="dialog" aria-modal="true" tabindex="-1"></div></div>
+<div class="overlay" id="ov-new"><div class="modal" id="md-new" role="dialog" aria-modal="true" tabindex="-1"></div></div>
+<div class="overlay" id="ov-supplier"><div class="modal" id="md-supplier" role="dialog" aria-modal="true" tabindex="-1"></div></div>
+<div class="overlay" id="ov-history"><div class="modal" id="md-history" role="dialog" aria-modal="true" tabindex="-1"></div></div>
+<div class="overlay" id="ov-acc"><div class="modal" style="max-width:430px" id="md-acc" role="dialog" aria-modal="true" tabindex="-1"></div></div>
+<!-- the in-app confirm / prompt (ask) — always on top -->
+<div class="overlay" id="ov-dlg"><div class="modal dlg" id="md-dlg" role="alertdialog" aria-modal="true" tabindex="-1"></div></div>
 
-<div id="toast" role="status"></div>
+<div id="toast" role="status" aria-live="polite"></div>
 <script>
 /* ================================================================
    CONFIGURE ME — paste your Apps Script /exec URL and the token
@@ -680,6 +757,14 @@ const API_TOKEN = 'rdco-sam-7k2x9v';
 const AUTO_REFRESH_MS = 5*60*1000;   /* pull fresh data every 5 minutes      */
 const AUTO_RETRY_MS   = 30*1000;     /* if deferred (busy), re-check in 30s  */
 
+/* Code.gs reports its version with the data (DB.api). From 4 it takes
+   partial saves, 'batch' and 'mergeSupplier'; against anything older
+   the page saves whole rows, one request each, the way it used to. */
+const API_MODERN = 4;
+/* The last dataset that loaded, kept on this device so the app opens
+   at once — and still shows something with no signal in the back. */
+const CACHE_KEY = 'rdco-samples-v1';
+
 /* ============================== state ============================== */
 let DB = {team:[],suppliers:[],reps:[],projects:[],lines:[],today:''};
 let SUP={}, PROJ={}, REPSBYSUP={}, LINESBYPROJ={};
@@ -691,9 +776,15 @@ let rState={sup:null,q:''};
 let receivedNow=[];                 /* line IDs received this session (Receive view) */
 let justHandedOff=[];               /* line IDs handed off since this project was opened */
 let showArchived=false;             /* is the handed-off section expanded? */
-let openProjectId=null, accCtx=null, prefillLine=null, editLineId=null;
-let pendingSaves=0, autoTimer=null, lastSync=null, syncing=false;
-const SLOW=12, RISK=3;
+let openProjectId=null, accCtx=null, prefillLine=null, stickyLine=null, editLineId=null, projEditOpen=false;
+let etaTouched={};                  /* add forms whose Expected arrival was typed, not estimated */
+let dropNext=[];                    /* field-id prefixes the next redraw should start fresh */
+let pendingSaves=0, saveGen=0, reloadAfterSaves=false;
+let autoTimer=null, lastSync=null, lastSyncCached=false, syncing=false, refreshing=false;
+/* Thresholds live in Code.gs CONFIG and arrive with the data, so the
+   page and the morning digest can't disagree. These are the fallback. */
+const CFG_DEFAULT={slowDays:12,riskDays:3,noEtaDays:14};
+let CFG={...CFG_DEFAULT};
 
 /* ============================== API ================================ */
 function apiGet(){
@@ -705,23 +796,125 @@ function apiPost(action,payload){
   return fetch(API_URL,{method:'POST',body:JSON.stringify({token:API_TOKEN,action,payload})})
     .then(r=>r.json()).then(j=>{if(!j.ok)throw new Error(j.error||'Save failed');return j.result;});
 }
-function persist(action,payload,okMsg){
-  pendingSaves++;
-  apiPost(action,payload).then(()=>{if(okMsg)toast(okMsg);})
-    .catch(e=>{toast('Save failed — reloading. '+e.message,true);boot(true);})
-    .finally(()=>{pendingSaves=Math.max(0,pendingSaves-1);});
+function modern(){return (DB.api||0)>=API_MODERN;}
+
+/* Saving. The screen changes first and the sheet second, so a tap
+   feels instant. Three rules keep that honest:
+   - an update sends only the fields that changed ({ID, ...}). Code.gs
+     leaves every column it isn't sent alone, so a page that has sat
+     open a while can't write its stale copy of the rest of the row
+     over someone else's work — the warehouse's receive, say.
+   - one action is one request: several writes go as one 'batch',
+     under one lock on the sheet.
+   - requests leave one at a time, in order, so an Undo can never land
+     ahead of the change it undoes.                                  */
+let outbox=Promise.resolve();
+function persist(ops,okMsg){
+  ops=(ops||[]).filter(Boolean);
+  if(!ops.length)return;
+  pendingSaves++;saveGen++;
+  outbox=outbox.then(()=>send(ops))
+    .then(()=>{if(okMsg)toast(okMsg);})
+    .catch(saveFailed)
+    .finally(()=>{
+      pendingSaves=Math.max(0,pendingSaves-1);
+      if(!pendingSaves&&reloadAfterSaves){reloadAfterSaves=false;refreshNow({quiet:true});}
+    });
+}
+function send(ops){
+  if(ops.length===1)return apiPost(ops[0].action,ops[0].payload);
+  if(modern())return apiPost('batch',{ops});
+  return ops.reduce((p,op)=>p.then(()=>apiPost(op.action,op.payload)),Promise.resolve());
+}
+/* A change that didn't reach the sheet. Said plainly, above everything
+   (the loader included), for long enough to read. Then, once nothing
+   else is still sending, the screen reloads to what the sheet holds. */
+function saveFailed(e){
+  toast('That change didn’t save — '+((e&&e.message)||'no connection')+'. Reloading what the sheet has.',{err:true,ms:8000});
+  reloadAfterSaves=true;
+}
+
+const KIND={line:['lines','saveLine'],project:['projects','saveProject'],supplier:['suppliers','saveSupplier'],rep:['reps','saveRep']};
+/* a record as sent: page-only keys (leading "_") left off */
+function plain(o){const p={};Object.keys(o).forEach(k=>{if(k[0]!=='_')p[k]=o[k]==null?'':o[k];});return p;}
+/* {ID, ...the fields of o that differ from before}, or null if none do */
+function diffOf(o,before){
+  const p={ID:o.ID};let n=0;
+  Object.keys(o).forEach(k=>{
+    if(k==='ID'||k[0]==='_')return;
+    const v=o[k]==null?'':o[k];
+    if(String(v)!==String(before[k]==null?'':before[k])){p[k]=v;n++;}
+  });
+  return n?p:null;
+}
+/* Puts o into DB — adding it, or folding a draft copy into the live
+   record — and returns the op that saves it: the whole record if it's
+   new, otherwise only what changed since `before` (a copy you took
+   before changing it). Null when there's nothing to send. */
+function opSave(kind,o,before){
+  const [list,action]=KIND[kind];
+  const cur=DB[list].find(x=>x.ID===o.ID);
+  if(!cur){DB[list].push(o);return {action,payload:plain(o)};}
+  if(cur!==o){before=before||{...cur};Object.assign(cur,o);}
+  if(!before||!modern())return {action,payload:plain(cur)};
+  const d=diffOf(cur,before);
+  return d&&{action,payload:d};
+}
+/* takes it out of DB here, and returns the op that deletes it there */
+function opDelete(kind,id){
+  if(kind==='line')DB.lines=DB.lines.filter(l=>l.ID!==id);
+  if(kind==='rep')DB.reps=DB.reps.filter(r=>r.ID!==id);
+  if(kind==='project'){DB.lines=DB.lines.filter(l=>l['Project ID']!==id);DB.projects=DB.projects.filter(p=>p.ID!==id);}
+  /* only ever reached for a supplier with no samples; its reps go too,
+     and any filter still pointing at it lets go */
+  if(kind==='supplier'){
+    DB.suppliers=DB.suppliers.filter(s=>s.ID!==id);DB.reps=DB.reps.filter(r=>r['Supplier ID']!==id);
+    if(tFilter.sup===id)tFilter.sup='';if(pFilter.sup===id)pFilter.sup='';if(rState.sup===id)rState.sup=null;
+  }
+  return {action:'delete',payload:{kind,id}};
+}
+function commit(ops,okMsg){index();persist(ops,okMsg);}
+function saveLine(l,msg,before){commit([opSave('line',l,before)],msg);}
+function saveProject(p,msg,before){commit([opSave('project',p,before)],msg);}
+function removeThing(kind,id,msg){const op=opDelete(kind,id);index();if(kind==='supplier')refreshFilters();persist([op],msg);}
+function newId(p){return p+Date.now()+'_'+Math.floor(Math.random()*10000);}
+/* Put records back the way they were. changes: [{kind, o, before}] —
+   the live record and a copy from just before it changed. Sent as
+   ordinary saves, so it queues up behind the change it reverses. */
+function undoChanges(changes,msg){
+  commit(changes.map(c=>{const now={...c.o};Object.assign(c.o,c.before);return opSave(c.kind,c.o,now);}),msg||'Undone');
+  redraw();
 }
 
 /* ============================ utilities ============================ */
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function ic(name){return '<svg class="icon"><use href="#i-'+name+'"/></svg>';}
-function toast(msg,err){const t=document.getElementById('toast');t.textContent=msg;t.className='show'+(err?' err':'');setTimeout(()=>t.className='',2600);}
-function today(){return DB.today||new Date().toISOString().slice(0,10);}
+/* One message at a time. A newer one replaces the older outright,
+   timer and all, so it is never cut short. opts: {err, ms, undo} —
+   undo adds a button and keeps the message up long enough to use it.
+   toast(msg,true) still means an error. */
+let toastT=null;
+function toast(msg,opts){
+  if(opts===true)opts={err:true};
+  opts=opts||{};
+  const t=document.getElementById('toast');
+  t.innerHTML='<span>'+esc(msg)+'</span>'+(opts.undo?'<button type="button" class="tundo">Undo</button>':'');
+  if(opts.undo){const fn=opts.undo;t.querySelector('.tundo').onclick=()=>{hideToast();fn();};}
+  t.className='show'+(opts.err?' err':'')+(opts.undo?' act':'');
+  clearTimeout(toastT);
+  toastT=setTimeout(hideToast,opts.ms||(opts.undo?6500:(opts.err?5000:2600)));
+}
+function hideToast(){clearTimeout(toastT);document.getElementById('toast').className='';}
+function localDay(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function today(){return DB.today||localDay();}
 function dDiff(a,b){return Math.round((new Date(b+'T12:00')-new Date(a+'T12:00'))/86400000);}
 function addDays(iso,n){const d=new Date(iso+'T12:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10);}
 function nice(iso){if(!iso)return'—';const d=new Date(iso+'T12:00');const o={month:'short',day:'numeric'};if(d.getFullYear()!==new Date().getFullYear())o.year='numeric';return d.toLocaleDateString('en-CA',o);}
 function median(arr){if(!arr.length)return null;const a=[...arr].sort((x,y)=>x-y);const m=Math.floor(a.length/2);return a.length%2?a[m]:Math.round((a[m-1]+a[m])/2);}
 let debT=null;function deb(fn){clearTimeout(debT);debT=setTimeout(fn,130);}
+function val(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+function isOpen(id){return document.getElementById(id).classList.contains('open');}
+function plural(n,one,many){return n+' '+(n===1?one:(many||one+'s'));}
 
 function index(){
   SUP={};DB.suppliers.forEach(s=>SUP[s.ID]=s);
@@ -787,7 +980,12 @@ function supStats(sid){
     unmeasured:unmeasured,
     first:ords[0]||'', last:ords[ords.length-1]||''};
 }
-function isOverdue(l){return l.Status==='Ordered'&&l['Expected Arrival']&&l['Expected Arrival']<today();}
+/* Overdue: on order and past its expected date — or, with no expected
+   date at all, ordered more than CFG.noEtaDays ago. Without that second
+   half, a sample from a supplier with no history could sit forever and
+   never turn red. The morning digest uses the same rule. */
+function chaseDate(l){return l['Expected Arrival']||(l['Date Ordered']?addDays(l['Date Ordered'],CFG.noEtaDays):'');}
+function isOverdue(l){const d=chaseDate(l);return l.Status==='Ordered'&&!!d&&d<today();}
 /* A sample is ARCHIVED once it has been received and handed off — that
    is exactly Status 'Delivered'. Derived, never stored: no column, no
    migration, and every historical delivered sample folds away the first
@@ -800,36 +998,38 @@ function projProgress(pid){
   const delivered=ls.filter(l=>l.Status==='Delivered').length;
   return {total:ls.length,arrived,delivered};
 }
+/* days an arrived sample has sat waiting to be handed off */
+function waitDays(l){return l['Date Arrived']?dDiff(l['Date Arrived'],today()):null;}
 function neededPill(p){
   if(!p['Needed By'])return'';
   const d=dDiff(today(),p['Needed By']);
-  const cls=d<0?'late':(d<=RISK?'late':(d<=7?'warn':'neutral'));
+  const cls=d<0?'late':(d<=CFG.riskDays?'late':(d<=7?'warn':'neutral'));
   const txt=d<0?('needed '+(-d)+'d ago'):'needed '+nice(p['Needed By']);
   return '<span class="pill '+cls+'">'+esc(txt)+'</span>';
 }
-
-/* ============================ persistence ========================== */
-function saveProject(p,msg){if(!PROJ[p.ID]&&p.ID)DB.projects.push(p);index();persist('saveProject',p,msg);}
-function saveLine(l,msg){if(!DB.lines.find(x=>x.ID===l.ID))DB.lines.push(l);index();persist('saveLine',l,msg);}
-function saveSupplier(s,msg){if(!SUP[s.ID])DB.suppliers.push(s);index();refreshFilters();persist('saveSupplier',s,msg);}
-function saveRep(r,msg){if(!DB.reps.find(x=>x.ID===r.ID))DB.reps.push(r);index();persist('saveRep',r,msg);}
-function removeThing(kind,id,msg){
-  if(kind==='line')DB.lines=DB.lines.filter(l=>l.ID!==id);
-  if(kind==='rep')DB.reps=DB.reps.filter(r=>r.ID!==id);
-  if(kind==='project'){DB.lines=DB.lines.filter(l=>l['Project ID']!==id);DB.projects=DB.projects.filter(p=>p.ID!==id);}
-  /* only ever reached for a supplier with no samples; its reps go too,
-     and any filter still pointing at it lets go */
-  if(kind==='supplier'){
-    DB.suppliers=DB.suppliers.filter(s=>s.ID!==id);DB.reps=DB.reps.filter(r=>r['Supplier ID']!==id);
-    if(tFilter.sup===id)tFilter.sup='';if(pFilter.sup===id)pFilter.sup='';if(rState.sup===id)rState.sup=null;
-  }
-  index();if(kind==='supplier')refreshFilters();
-  persist('delete',{kind,id},msg);
+/* Everyone who can be a salesperson: the Team tab, then anyone already
+   on a project who isn't on it (people leave; projects keep the name).
+   Without the second half a dropdown can't show a project's real
+   salesperson, falls back to its first option, and saving quietly
+   hands the project to whoever that is. */
+function salesNames(){
+  const team=[...new Set(DB.team.map(t=>t.Name).filter(Boolean))];
+  const extra=[...new Set(DB.projects.map(p=>p.Salesperson).filter(n=>n&&!team.includes(n)))].sort((a,b)=>a.localeCompare(b));
+  return team.concat(extra);
 }
-function newId(p){return p+Date.now()+'_'+Math.floor(Math.random()*10000);}
+function salesOptions(cur){
+  return '<option value="">—</option>'+salesNames().map(n=>'<option'+(n===cur?' selected':'')+'>'+esc(n)+'</option>').join('');
+}
+function supplierOptions(){
+  return '<option value="">Choose…</option>'+[...DB.suppliers].sort((a,b)=>a.Name.localeCompare(b.Name))
+    .map(s=>'<option value="'+esc(s.ID)+'">'+esc(s.Name)+'</option>').join('');
+}
 
 /* =============================== nav =============================== */
-function show(v){
+/* Each view is a history entry, so the phone's Back button walks back
+   through them (and closes windows — see openOv) instead of leaving. */
+function show(v,fromPop){
+  const changed=v!==view;
   view=v;
   ['today','receive','projects','suppliers'].forEach(x=>{
     document.getElementById('view-'+x).style.display=x===v?'':'none';
@@ -838,6 +1038,7 @@ function show(v){
   });
   render();
   window.scrollTo({top:0});
+  if(changed&&!fromPop)history.pushState({view:v,sup:v==='receive'?rState.sup:null},'');
 }
 function render(){
   updateBadges();
@@ -845,6 +1046,12 @@ function render(){
   if(view==='receive')renderReceive();
   if(view==='projects')renderProjectList();
   if(view==='suppliers')renderSupplierList();
+}
+/* the view, plus whichever windows show sample data */
+function redraw(){
+  render();
+  if(isOpen('ov-project'))renderProjectModal();
+  if(isOpen('ov-history'))renderHistory();
 }
 function updateBadges(){
   const n=DB.lines.filter(isOverdue).length;
@@ -855,31 +1062,44 @@ function updateBadges(){
 /* fill the static filter dropdowns, keeping the current selection */
 function refreshFilters(){
   const supOpts=sel=>'<option value="">All suppliers</option>'+[...DB.suppliers].sort((a,b)=>a.Name.localeCompare(b.Name))
-    .map(s=>'<option value="'+s.ID+'"'+(sel===s.ID?' selected':'')+'>'+esc(s.Name)+'</option>').join('');
+    .map(s=>'<option value="'+esc(s.ID)+'"'+(sel===s.ID?' selected':'')+'>'+esc(s.Name)+'</option>').join('');
   document.getElementById('td-sup').innerHTML=supOpts(tFilter.sup);
   document.getElementById('pj-sup').innerHTML=supOpts(pFilter.sup);
   document.getElementById('pj-sales').innerHTML='<option value="">All salespeople</option>'+
-    [...new Set(DB.team.map(t=>t.Name))].map(s=>'<option'+(pFilter.sales===s?' selected':'')+'>'+esc(s)+'</option>').join('');
+    salesNames().map(s=>'<option'+(pFilter.sales===s?' selected':'')+'>'+esc(s)+'</option>').join('');
   document.getElementById('pj-status').value=pFilter.status;
   document.getElementById('td-sort').value=tFilter.sort;
 }
 
 /* ============================ TODAY view =========================== */
-function lineRow(l,inModal){
+/* inModal: inside the project window (edit / duplicate / delete; no
+   project link — it's this project). inGroup: under a project heading
+   in "ready to hand off" (no project link either). */
+function lineRow(l,inModal,inGroup){
   const p=PROJ[l['Project ID']]||{},s=SUP[l['Supplier ID']]||{},r=rep(l['Rep ID']);
-  const od=isOverdue(l);
+  const od=isOverdue(l),eta=l['Expected Arrival'],id=l.ID;
   let when='';
-  if(l.Status==='Ordered')when=l['Expected Arrival']?(od?'<span class="pill late">'+dDiff(l['Expected Arrival'],today())+'d late · was due '+nice(l['Expected Arrival'])+'</span>':'<span class="subtle">expected '+nice(l['Expected Arrival'])+'</span>'):'<span class="pill neutral">no ETA — new supplier</span>';
-  if(l.Status==='Arrived')when='<span class="subtle">arrived '+nice(l['Date Arrived'])+'</span>'+(l.Accuracy&&l.Accuracy!=='Correct'?' <span class="pill warn">'+esc(l.Accuracy)+'</span>':'');
+  if(l.Status==='Ordered'){
+    if(eta)when=od?'<span class="pill late">'+dDiff(eta,today())+'d late · was due '+nice(eta)+'</span>':'<span class="subtle">expected '+nice(eta)+'</span>';
+    else when=od?'<span class="pill late">no ETA · ordered '+dDiff(l['Date Ordered'],today())+'d ago</span>':'<span class="pill neutral">no ETA yet</span>';
+  }
+  if(l.Status==='Arrived'){
+    const w=waitDays(l);
+    when='<span class="subtle">arrived '+nice(l['Date Arrived'])+(w>0?' · waiting <span class="mono">'+w+'d</span>':'')+'</span>'+
+      (l.Accuracy&&l.Accuracy!=='Correct'?' <span class="pill warn">'+esc(l.Accuracy)+'</span>':'');
+  }
   if(l.Status==='Delivered')when='<span class="subtle">delivered '+nice(l['Date Delivered'])+'</span>';
   const contact=r&&r.Email?('<a href="mailto:'+esc(r.Email)+'">'+esc(r.Name||r.Email)+'</a>'):(s['Sample Dept Email']?'<a href="mailto:'+esc(s['Sample Dept Email'])+'">sample dept</a>':'');
-  return '<div class="rowcard s-'+l.Status+(od?' overdue':'')+'">'+
+  const proj=inModal||inGroup?'':' · <a href="#" onclick="openProject(\''+l['Project ID']+'\');return false">'+esc(p['Project Name']||'—')+'</a>';
+  return '<div class="rowcard s-'+esc(l.Status)+(od?' overdue':'')+'">'+
     '<div class="grow">'+sampleTitle(l)+
-    '<div class="meta">'+esc(s.Name||'—')+(contact?' · '+contact:'')+' · <a href="#" onclick="openProject(\''+l['Project ID']+'\');return false">'+esc(p['Project Name']||'—')+'</a> · ordered '+nice(l['Date Ordered'])+'</div></div>'+
-    '<div>'+when+'</div><span class="pill '+l.Status+'">'+l.Status+'</span>'+
-    (l.Status==='Ordered'?'<button class="btn sm" onclick="askAccuracy([\''+l.ID+'\'])">'+ic('box')+' Receive</button>':'')+
-    (l.Status==='Arrived'?'<button class="btn sm good" onclick="markDelivered(\''+l.ID+'\')">'+ic('check')+' Hand off</button>':'')+
-    (inModal?'<button class="btn sm ghost" onclick="editLine(\''+l.ID+'\')">'+ic('edit')+'</button><button class="btn sm ghost" title="Duplicate" onclick="duplicateLine(\''+l.ID+'\')">'+ic('copy')+'</button><button class="btn sm danger" onclick="if(confirm(\'Delete this sample line?\'))delLine(\''+l.ID+'\')">'+ic('trash')+'</button>':'')+
+    '<div class="meta">'+esc(s.Name||'—')+(contact?' · '+contact:'')+proj+' · ordered '+nice(l['Date Ordered'])+'</div></div>'+
+    '<div>'+when+'</div><span class="pill '+esc(l.Status)+'">'+esc(l.Status)+'</span>'+
+    (l.Status==='Ordered'?'<button class="btn sm" onclick="askAccuracy([\''+id+'\'])">'+ic('box')+' Receive</button>':'')+
+    (l.Status==='Arrived'?'<button class="btn sm good" onclick="handOff([\''+id+'\'])">'+ic('check')+' Hand off</button>':'')+
+    (inModal?'<button class="btn sm ghost" title="Edit" aria-label="Edit sample" onclick="editLine(\''+id+'\')">'+ic('edit')+'</button>'+
+      '<button class="btn sm ghost" title="Duplicate" aria-label="Duplicate sample" onclick="duplicateLine(\''+id+'\')">'+ic('copy')+'</button>'+
+      '<button class="btn sm danger" title="Delete" aria-label="Delete sample" onclick="askDelLine(\''+id+'\')">'+ic('trash')+'</button>':'')+
   '</div>';
 }
 /* Today's four numbers are filters, not decoration. Tapping one
@@ -914,7 +1134,7 @@ function renderTodayLists(){
   const overdue=open.filter(isOverdue);
   const ready=DB.lines.filter(l=>l.Status==='Arrived');
   const active=DB.projects.filter(p=>p.Status==='Active');
-  const atRisk=active.filter(p=>p['Needed By']&&p['Needed By']<=addDays(t,RISK)&&(LINESBYPROJ[p.ID]||[]).some(l=>l.Status==='Ordered'));
+  const atRisk=active.filter(p=>p['Needed By']&&p['Needed By']<=addDays(t,CFG.riskDays)&&(LINESBYPROJ[p.ID]||[]).some(l=>l.Status==='Ordered'));
   const f=l=>{
     if(tFilter.sup&&l['Supplier ID']!==tFilter.sup)return false;
     if(tFilter.q){const q=tFilter.q.toLowerCase();const p=PROJ[l['Project ID']]||{},s=SUP[l['Supplier ID']]||{};
@@ -922,10 +1142,15 @@ function renderTodayLists(){
     return true;
   };
   const srt=(a,b)=>{
-    if(tFilter.sort==='due')return (a['Expected Arrival']||'9999')<(b['Expected Arrival']||'9999')?-1:1;
+    if(tFilter.sort==='due')return (chaseDate(a)||'9999')<(chaseDate(b)||'9999')?-1:1;
     if(tFilter.sort==='supplier')return (SUP[a['Supplier ID']]||{Name:''}).Name.localeCompare((SUP[b['Supplier ID']]||{Name:''}).Name);
     return ((PROJ[a['Project ID']]||{})['Project Name']||'').localeCompare(((PROJ[b['Project ID']]||{})['Project Name']||''));
   };
+  /* One hairline row, not a dashed box, so an empty list doesn't push
+     the ones you can act on down the screen. And it says so when the
+     list isn't empty, just filtered out by the search. */
+  const none=(all,what,msg)=>'<div class="emptyrow">'+(all.length&&(tFilter.q||tFilter.sup)
+    ?'No '+what+(tFilter.q?' match “'+esc(tFilter.q)+'”':' from this supplier')+'.':msg)+'</div>';
   let h='';
   const showSect=k=>!tFocus||tFocus===k;
   if(tFocus){
@@ -941,17 +1166,40 @@ function renderTodayLists(){
   }
   const od=overdue.filter(f).sort(srt);
   if(showSect('overdue'))
-    h+='<div class="sect"><h2>Overdue<span class="count'+(od.length?' hot':'')+'">'+od.length+'</span></h2>'+(od.length?od.map(l=>lineRow(l)).join(''):'<div class="empty"><b>Nothing overdue.</b> The board is clean.</div>')+'</div>';
-  const rd=ready.filter(f).sort(srt);
-  if(rd.length&&!tFocus)h+='<div class="sect"><h2>In the building — ready to hand off<span class="count">'+rd.length+'</span></h2>'+rd.map(l=>lineRow(l)).join('')+'</div>';
+    h+='<div class="sect"><h2>Overdue<span class="count'+(od.length?' hot':'')+'">'+od.length+'</span></h2>'+
+      (od.length?od.map(l=>lineRow(l)).join(''):none(overdue,'overdue samples','<b>Nothing overdue.</b> The board is clean.'))+'</div>';
+  const rd=ready.filter(f);
+  if(rd.length&&!tFocus)h+=readyBlock(rd);
   if(showSect('week')){
-    const wk=open.filter(l=>!isOverdue(l)&&l['Expected Arrival']&&l['Expected Arrival']<=addDays(t,7)).filter(f).sort(srt);
-    if(tFocus==='week')h+='<div class="sect"><h2>Arriving this week<span class="count">'+wk.length+'</span></h2>'+(wk.length?wk.map(l=>lineRow(l)).join(''):'<div class="empty">Nothing due in the next seven days.</div>')+'</div>';
+    const wkAll=open.filter(l=>!isOverdue(l)&&l['Expected Arrival']&&l['Expected Arrival']<=addDays(t,7));
+    const wk=wkAll.filter(f).sort(srt);
+    if(tFocus==='week')h+='<div class="sect"><h2>Arriving this week<span class="count">'+wk.length+'</span></h2>'+
+      (wk.length?wk.map(l=>lineRow(l)).join(''):none(wkAll,'samples arriving this week','Nothing due in the next seven days.'))+'</div>';
   }
-  const ar=open.filter(l=>!isOverdue(l)).filter(f).sort(srt);
+  const arAll=open.filter(l=>!isOverdue(l));
+  const ar=arAll.filter(f).sort(srt);
   if(showSect('transit')&&tFocus!=='week')
-    h+='<div class="sect"><h2>In transit<span class="count">'+ar.length+'</span></h2>'+(ar.length?ar.map(l=>lineRow(l)).join(''):'<div class="empty">Nothing on the way right now.</div>')+'</div>';
+    h+='<div class="sect"><h2>In transit<span class="count">'+ar.length+'</span></h2>'+
+      (ar.length?ar.map(l=>lineRow(l)).join(''):none(arAll,'samples in transit','Nothing on the way right now.'))+'</div>';
   document.getElementById('td-lists').innerHTML=h;
+}
+/* In the building, grouped by project — a job's samples go out
+   together, so each group gets one "Hand off all". Oldest first, with
+   how long each has waited: this list only helps if it stays short. */
+function readyBlock(ls){
+  const by={};ls.forEach(l=>(by[l['Project ID']]=by[l['Project ID']]||[]).push(l));
+  const arr=l=>l['Date Arrived']||'9999';
+  const groups=Object.keys(by).map(pid=>by[pid].sort((a,b)=>arr(a)<arr(b)?-1:1)).sort((a,b)=>arr(a[0])<arr(b[0])?-1:1);
+  return '<div class="sect"><h2>In the building — ready to hand off<span class="count">'+ls.length+'</span></h2>'+
+    groups.map(g=>{
+      const pid=g[0]['Project ID'],p=PROJ[pid]||{},w=waitDays(g[0]);
+      return '<div class="group"><div class="grouphead"><div class="grow">'+
+          '<a href="#" onclick="openProject(\''+pid+'\');return false">'+esc(p['Project Name']||'(no project)')+'</a>'+
+          '<span class="subtle"> · '+plural(g.length,'sample')+(w>0?' · oldest waiting <span class="mono">'+w+'d</span>':'')+
+          (p.Status==='Complete'?' · project marked complete':'')+'</span></div>'+
+          (g.length>1?'<button class="btn sm good" onclick="handOff('+esc(JSON.stringify(g.map(l=>l.ID)))+')">'+ic('check')+' Hand off all '+g.length+'</button>':'')+
+        '</div>'+g.map(l=>lineRow(l,false,true)).join('')+'</div>';
+    }).join('')+'</div>';
 }
 
 /* =========================== RECEIVE view ========================== */
@@ -971,7 +1219,7 @@ function renderReceive(){
     h+='<div class="supgrid">'+ids.map(sid=>{
       const s=SUP[sid]||{Name:'Unknown supplier'};
       const ls=bySup[sid];const late=ls.filter(isOverdue).length;
-      return '<button class="boxcard" onclick="rState.sup=\''+sid+'\';renderReceive()">'+
+      return '<button class="boxcard" onclick="recvOpen(\''+sid+'\')">'+
         '<div class="bhead"><span class="bicon">'+ic('box')+'</span><h3>'+esc(s.Name)+'</h3></div>'+
         '<div class="bmeta"><span class="pill Ordered">'+ls.length+' waiting</span>'+(late?'<span class="pill late">'+late+' overdue</span>':'')+'</div></button>';
     }).join('')+'</div>';
@@ -979,26 +1227,34 @@ function renderReceive(){
   if(receivedNow.length)h+=receivedNowBlock();
   el.innerHTML=h;
 }
+/* the drill-down is its own history entry: Back returns to the list */
+function recvOpen(sid){rState.sup=sid;renderReceive();window.scrollTo({top:0});history.pushState({view:'receive',sup:sid},'');}
+function recvBack(){
+  if(history.state&&history.state.sup)history.back();
+  else{rState.sup=null;renderReceive();}
+}
 function renderReceiveSupplier(el,open){
   const s=SUP[rState.sup]||{Name:'Unknown supplier'};
   const ls=open.filter(l=>l['Supplier ID']===rState.sup)
-    .sort((a,b)=>(a['Expected Arrival']||'9999')<(b['Expected Arrival']||'9999')?-1:1);
-  let h='<button class="backlink" onclick="rState.sup=null;renderReceive()">'+ic('back')+' All suppliers</button>'+
+    .sort((a,b)=>(chaseDate(a)||'9999')<(chaseDate(b)||'9999')?-1:1);
+  let h='<button class="backlink" onclick="recvBack()">'+ic('back')+' All suppliers</button>'+
     '<div class="pagehead"><h2>'+esc(s.Name)+'</h2><p>Tap each sample that is in the box.</p></div>';
   if(ls.length>1)h+='<div style="margin-bottom:14px"><button class="btn good" onclick="receiveAll()">'+ic('check')+' Everything is here &amp; correct ('+ls.length+')</button></div>';
   if(!ls.length)h+='<div class="empty"><b>All caught up.</b> Nothing left on order from '+esc(s.Name)+'.</div>';
   ls.forEach(l=>{
-    const p=PROJ[l['Project ID']]||{};const od=isOverdue(l);
+    const p=PROJ[l['Project ID']]||{};const od=isOverdue(l),eta=l['Expected Arrival'];
+    const due=eta?(od?' · <span class="pill late">'+dDiff(eta,today())+'d late</span>':' · expected '+nice(eta))
+                 :(od?' · <span class="pill late">no ETA · ordered '+dDiff(l['Date Ordered'],today())+'d ago</span>':' · no ETA yet');
     h+='<div class="rowcard recvrow s-Ordered'+(od?' overdue':'')+'">'+
       '<div class="grow">'+sampleTitle(l)+
-      '<div class="meta">'+esc(p['Project Name']||'—')+' · ordered '+nice(l['Date Ordered'])+(l['Expected Arrival']?(od?' · <span class="pill late">'+dDiff(l['Expected Arrival'],today())+'d late</span>':' · expected '+nice(l['Expected Arrival'])):'')+'</div></div>'+
+      '<div class="meta">'+esc(p['Project Name']||'—')+' · ordered '+nice(l['Date Ordered'])+due+'</div></div>'+
       '<button class="btn sm" onclick="askAccuracy([\''+l.ID+'\'])">'+ic('box')+' Receive</button></div>';
   });
   if(receivedNow.length)h+=receivedNowBlock();
   el.innerHTML=h;
 }
 function receivedNowBlock(){
-  const ls=receivedNow.map(id=>DB.lines.find(l=>l.ID===id)).filter(Boolean);
+  const ls=receivedNow.map(id=>DB.lines.find(l=>l.ID===id)).filter(l=>l&&l.Status!=='Ordered');
   if(!ls.length)return'';
   return '<div class="sect" style="margin-top:26px"><h2>Received just now<span class="count">'+ls.length+'</span></h2>'+
     ls.map(l=>{const s=SUP[l['Supplier ID']]||{};const p=PROJ[l['Project ID']]||{};
@@ -1009,19 +1265,23 @@ function receivedNowBlock(){
 }
 function receiveAll(){
   const ids=DB.lines.filter(l=>l.Status==='Ordered'&&l['Supplier ID']===rState.sup).map(l=>l.ID);
-  if(!ids.length)return;
-  commitReceive(ids,'Correct');
-  toast(ids.length+' samples received');
+  if(ids.length)commitReceive(ids,'Correct');
 }
+/* Ordered -> Arrived, in one request, with an Undo. It moves supplier
+   scores, so a mis-tap has to be cheap to take back. */
 function commitReceive(ids,acc){
-  const t=today();
-  ids.forEach(id=>{const l=DB.lines.find(x=>x.ID===id);if(!l)return;
+  const t=today(),changes=[];
+  ids.forEach(id=>{const l=DB.lines.find(x=>x.ID===id);if(!l||l.Status!=='Ordered')return;
+    changes.push({kind:'line',o:l,before:{...l}});
     l.Status='Arrived';l['Date Arrived']=t;l.Accuracy=acc;
     if(!receivedNow.includes(id))receivedNow.unshift(id);});
-  index();
-  persist('receive',{items:ids.map(id=>({id,accuracy:acc}))});
-  updateBadges();
-  if(document.getElementById('ov-project').classList.contains('open'))renderProjectModal();else render();
+  if(!changes.length)return;
+  commit([{action:'receive',payload:{items:changes.map(c=>({id:c.o.ID,accuracy:acc}))}}]);
+  toast(changes.length>1?changes.length+' samples received':'Marked arrived',{undo:()=>{
+    receivedNow=receivedNow.filter(id=>!changes.some(c=>c.o.ID===id));
+    undoChanges(changes,'Receive undone');
+  }});
+  redraw();
 }
 
 /* arrival + accuracy — shared by Today, Receive, and project modal */
@@ -1029,33 +1289,43 @@ function askAccuracy(ids){
   accCtx=ids;
   const l=DB.lines.find(x=>x.ID===ids[0])||{};
   const s=SUP[l['Supplier ID']]||{};
-  document.getElementById('md-acc').innerHTML='<button class="close" onclick="closeOv(\'ov-acc\')">'+ic('x')+'</button>'+
+  document.getElementById('md-acc').innerHTML='<button class="close" aria-label="Close" onclick="closeOv(\'ov-acc\')">'+ic('x')+'</button>'+
     '<h2>How did it arrive?</h2><p class="subtle" style="margin-top:4px">'+esc(l.Product||'')+(s.Name?' · '+esc(s.Name):'')+' — this builds the supplier\'s accuracy rating.</p>'+
     '<div class="acc-opts">'+
     '<button class="btn good" onclick="finishArrival(\'Correct\')">'+ic('check')+' Correct &amp; complete</button>'+
     '<button class="btn warn" onclick="finishArrival(\'Incomplete\')">'+ic('half')+' Incomplete</button>'+
     '<button class="btn bad" onclick="finishArrival(\'Wrong item\')">'+ic('x')+' Wrong item</button>'+
     '<button class="btn ghost" onclick="finishArrival(\'\')">Skip — just mark arrived</button></div>';
-  document.getElementById('ov-acc').classList.add('open');
+  openOv('ov-acc');
 }
 function finishArrival(acc){
-  document.getElementById('ov-acc').classList.remove('open');
-  if(!accCtx)return;
-  commitReceive(accCtx,acc);
-  accCtx=null;
-  toast('Marked arrived');
+  const ids=accCtx;accCtx=null;
+  closeOv('ov-acc',{force:true});
+  if(ids)commitReceive(ids,acc);
 }
-function markDelivered(id){
-  const l=DB.lines.find(x=>x.ID===id);if(!l)return;
-  l.Status='Delivered';l['Date Delivered']=today();
-  if(!justHandedOff.includes(id))justHandedOff.push(id);
-  saveLine(l,'Handed off');
-  const ls=LINESBYPROJ[l['Project ID']]||[];
-  const p=PROJ[l['Project ID']];
-  if(p&&p.Status==='Active'&&ls.length&&ls.every(x=>x.Status==='Delivered')){
-    p.Status='Complete';p.Completed=today();saveProject(p,'All samples delivered — project complete');
-  }
-  if(document.getElementById('ov-project').classList.contains('open'))renderProjectModal();else render();
+/* Received -> handed off. Takes several at once (a project's whole
+   pile). A project whose last sample this was is completed with it —
+   all in one request, and one Undo puts the lot back. */
+function handOff(ids){
+  const t=today(),changes=[],ops=[],done=[];
+  ids.forEach(id=>{const l=DB.lines.find(x=>x.ID===id);if(!l||l.Status!=='Arrived')return;
+    const b={...l};l.Status='Delivered';l['Date Delivered']=t;
+    if(!justHandedOff.includes(id))justHandedOff.push(id);
+    changes.push({kind:'line',o:l,before:b});ops.push(opSave('line',l,b));});
+  if(!changes.length)return;
+  index();
+  [...new Set(changes.map(c=>c.o['Project ID']))].forEach(pid=>{
+    const p=PROJ[pid],ls=LINESBYPROJ[pid]||[];
+    if(p&&p.Status==='Active'&&ls.length&&ls.every(x=>x.Status==='Delivered')){
+      const b={...p};p.Status='Complete';p.Completed=t;
+      changes.push({kind:'project',o:p,before:b});ops.push(opSave('project',p,b));done.push(p['Project Name']);
+    }
+  });
+  commit(ops);
+  const n=changes.length-done.length;
+  toast((n>1?n+' handed off':'Handed off')+(done.length===1?' — '+done[0]+' complete':(done.length?' — '+done.length+' projects complete':'')),
+    {undo:()=>undoChanges(changes,'Hand-off undone')});
+  redraw();
 }
 
 /* ========================== PROJECTS view ========================== */
@@ -1079,7 +1349,9 @@ function renderProjectList(){
       const sups=[...new Set((LINESBYPROJ[p.ID]||[]).map(l=>(SUP[l['Supplier ID']]||{}).Name).filter(Boolean))];
       const pct=pr.total?Math.round(pr.arrived/pr.total*100):0;
       const hasLate=(LINESBYPROJ[p.ID]||[]).some(isOverdue);
-      return '<div class="pcard" onclick="openProject(\''+p.ID+'\')"><h3>'+esc(p['Project Name'])+'</h3>'+
+      /* a div (it holds a heading) that still works from the keyboard:
+         role + tabindex here, Enter / Space in the keydown handler */
+      return '<div class="pcard" role="button" tabindex="0" onclick="openProject(\''+p.ID+'\')"><h3>'+esc(p['Project Name'])+'</h3>'+
         '<div class="meta">'+esc(p.Client||'')+(p.Salesperson?' · '+esc(p.Salesperson):'')+'</div>'+
         '<div class="chips">'+neededPill(p)+(hasLate?'<span class="pill late">overdue samples</span>':'')+(p.Status==='Complete'?'<span class="pill Arrived">Complete</span>':'')+'</div>'+
         '<div class="thread"><i class="'+(pct===100?'done':'')+'" style="width:'+pct+'%"></i></div>'+
@@ -1091,139 +1363,215 @@ function renderProjectList(){
 }
 
 /* project modal */
-function openProject(pid){
-  openProjectId=pid;prefillLine=null;editLineId=null;
-  justHandedOff=[];showArchived=false;
-  document.getElementById('ov-project').classList.add('open');
-  renderProjectModal();
+function openProject(pid,replace){
+  openProjectId=pid;prefillLine=null;stickyLine=null;editLineId=null;projEditOpen=false;
+  justHandedOff=[];showArchived=false;etaTouched.al=false;
+  document.getElementById('md-project').innerHTML='';     /* nothing carries over from the last project */
+  renderProjectModal(true);
+  document.getElementById('ov-project').scrollTop=0;document.getElementById('md-project').scrollTop=0;
+  openOv('ov-project',replace?'replace':'push');
 }
 /* The archive is a view, not a state — the rows still exist, still
    belong to the project, and still count toward the supplier's speed
    and accuracy scores. Use Exclude if you want a sample out of the
    SCORING; this only decides what you have to scroll past. */
-function archiveBar(ls){
+function archiveBar(ls,row){
   if(!ls.length)return'';
   return '<button class="archbar'+(showArchived?' open':'')+'" onclick="toggleArchived()" '+
       'aria-expanded="'+(showArchived?'true':'false')+'">'+
     '<svg class="icon chev"><use href="#i-back"/></svg>'+
     '<span class="grow">Handed off</span>'+
     '<span class="count">'+ls.length+'</span></button>'+
-    (showArchived?ls.map(l=>lineRow(l,true)).join(''):'');
+    (showArchived?ls.map(row).join(''):'');
 }
 function toggleArchived(){showArchived=!showArchived;renderProjectModal();}
-function closeOv(id){
-  if(id==='ov-project'){editLineId=null;prefillLine=null;}
-  if(id==='ov-history'){histSup=null;histEditId=null;}
-  document.getElementById(id).classList.remove('open');render();
-}
-function saveAndClose(){
-  const e=document.getElementById('proj-edit');
-  if(e&&e.style.display!=='none')saveProjEdit();
-  closeOv('ov-project');toast('Project saved');
-}
-function renderProjectModal(){
-  const p=PROJ[openProjectId];if(!p)return closeOv('ov-project');
+/* Everything typed in this window survives a redraw (a hand-off, a
+   refresh, a new supplier) — see grabFields. `reset` starts the add
+   form over, keeping only what's sticky after adding a sample. */
+function renderProjectModal(reset){
+  const p=PROJ[openProjectId];
+  if(!p){if(isOpen('ov-project'))closeOv('ov-project',{force:true});return;}
+  const keep=grabFields('md-project',dropNext.concat(reset?['al-']:[],projEditOpen?[]:['pe-']));dropNext=[];
   const ls=(LINESBYPROJ[p.ID]||[]).slice().sort((a,b)=>(a['Date Ordered']||'')<(b['Date Ordered']||'')?-1:1);
   const pr=projProgress(p.ID);
   const arch=ls.filter(isArchived), live=ls.filter(l=>!isArchived(l));
-  let h='<button class="close" onclick="closeOv(\'ov-project\')">'+ic('x')+'</button>'+
+  const row=l=>editLineId===l.ID?lineEditor(l):lineRow(l,true);
+  let h='<button class="close" aria-label="Close" onclick="closeOv(\'ov-project\')">'+ic('x')+'</button>'+
     '<h2>'+esc(p['Project Name'])+'</h2>'+
     '<div class="subtle">'+esc(p.Client||'')+(p.Salesperson?' · '+esc(p.Salesperson):'')+' · created '+nice(p.Created)+'</div>'+
     '<div class="chips" style="margin-top:8px">'+neededPill(p)+'<span class="pill '+(p.Status==='Complete'?'Arrived':'Ordered')+'">'+esc(p.Status)+'</span></div>'+
     (p.Notes?'<div class="hint">'+esc(p.Notes)+'</div>':'')+
-    '<div style="margin-top:10px"><button class="btn sm ghost" onclick="toggleEditProj()">'+ic('edit')+' Edit details</button></div>'+
-    '<div id="proj-edit" style="display:none;margin-top:10px" class="card"><div class="fields">'+
-      '<div><label>Project name</label><input id="pe-name" value="'+esc(p['Project Name'])+'"></div>'+
-      '<div><label>Client</label><input id="pe-client" value="'+esc(p.Client)+'"></div>'+
-      '<div><label>Salesperson</label><select id="pe-sales">'+DB.team.map(t=>'<option'+(p.Salesperson===t.Name?' selected':'')+'>'+esc(t.Name)+'</option>').join('')+'</select></div>'+
-      '<div><label>Needed by</label><input type="date" id="pe-needed" value="'+esc(p['Needed By'])+'"></div></div>'+
-      '<label>Notes</label><textarea id="pe-notes" rows="2">'+esc(p.Notes)+'</textarea>'+
-      '<div style="margin-top:10px"><button class="btn sm" onclick="saveProjEdit()">Save details</button></div></div>'+
+    '<div style="margin-top:10px"><button class="btn sm ghost" aria-expanded="'+projEditOpen+'" onclick="toggleEditProj()">'+ic('edit')+' Edit details</button></div>'+
+    '<div id="proj-edit" style="'+(projEditOpen?'':'display:none;')+'margin-top:10px" class="card"><div class="fields">'+
+      '<div><label for="pe-name">Project name</label><input id="pe-name" value="'+esc(p['Project Name'])+'"></div>'+
+      '<div><label for="pe-client">Client</label><input id="pe-client" value="'+esc(p.Client)+'"></div>'+
+      '<div><label for="pe-sales">Salesperson</label><select id="pe-sales">'+salesOptions(p.Salesperson)+'</select></div>'+
+      '<div><label for="pe-needed">Needed by</label><input type="date" id="pe-needed" value="'+esc(p['Needed By'])+'"></div></div>'+
+      '<label for="pe-notes">Notes</label><textarea id="pe-notes" rows="2">'+esc(p.Notes)+'</textarea>'+
+      '<div style="margin-top:10px;display:flex;gap:8px"><button class="btn sm" onclick="saveProjEdit()">Save details</button>'+
+      '<button class="btn sm ghost" onclick="cancelProjEdit()">Cancel</button></div></div>'+
     '<hr class="soft"><h3 style="margin-bottom:8px;font-size:15px">Samples — '+pr.arrived+' of '+pr.total+' arrived</h3>'+
-    (live.length?live.map(l=>lineRow(l,true)).join('')
+    (live.length?live.map(row).join('')
       :(arch.length?'<div class="empty"><b>Everything here is handed off.</b> Open the archive below to see or edit those samples.</div>'
                    :'<div class="empty">No samples yet — add the first one below.</div>'))+
-    archiveBar(arch)+
-    '<hr class="soft">'+addLineForm()+
-    '<hr class="soft"><div style="display:flex;gap:8px;flex-wrap:wrap">'+
+    archiveBar(arch,row)+
+    '<hr class="soft">'+addLineForm('al')+
+    '<hr class="soft"><div class="projfoot">'+
     '<button class="btn" onclick="saveAndClose()">Save &amp; close</button>'+
     (p.Status==='Active'?'<button class="btn sm ghost" onclick="completeProject()">Mark project complete</button>':'<button class="btn sm ghost" onclick="reopenProject()">Reopen project</button>')+
-    '<button class="btn sm danger" onclick="if(confirm(\'Delete this project AND all its sample lines?\'))delProject()">'+ic('trash')+' Delete</button></div>';
+    '<button class="btn sm danger" onclick="askDelProject()">'+ic('trash')+' Delete</button></div>';
   document.getElementById('md-project').innerHTML=h;
-  if(editLineId)fillLineForm();
-  else if(prefillLine)applyPrefill();
+  putFields(keep);
+  if(stickyLine)applySticky();
+  if(prefillLine)applyPrefill();
 }
-function toggleEditProj(){const e=document.getElementById('proj-edit');e.style.display=e.style.display==='none'?'':'none';}
+function toggleEditProj(){
+  if(projEditOpen)return cancelProjEdit();
+  projEditOpen=true;renderProjectModal();
+  const n=document.getElementById('pe-name');if(n)n.focus();
+}
+function cancelProjEdit(){projEditOpen=false;renderProjectModal();}
 function saveProjEdit(){
-  const p=PROJ[openProjectId];
-  p['Project Name']=document.getElementById('pe-name').value.trim();
-  p.Client=document.getElementById('pe-client').value.trim();
-  p.Salesperson=document.getElementById('pe-sales').value;
-  p['Needed By']=document.getElementById('pe-needed').value;
-  p.Notes=document.getElementById('pe-notes').value.trim();
-  saveProject(p,'Project updated');renderProjectModal();
+  const p=PROJ[openProjectId];if(!p)return true;
+  const name=val('pe-name');
+  if(!name){toast('The project needs a name',true);return false;}
+  const before={...p};
+  p['Project Name']=name;p.Client=val('pe-client');p.Salesperson=val('pe-sales');
+  p['Needed By']=val('pe-needed');p.Notes=val('pe-notes');
+  projEditOpen=false;
+  saveProject(p,'Project updated',before);
+  renderProjectModal();
+  return true;
 }
-function completeProject(){const p=PROJ[openProjectId];p.Status='Complete';p.Completed=today();saveProject(p,'Project complete');renderProjectModal();}
-function reopenProject(){const p=PROJ[openProjectId];p.Status='Active';p.Completed='';saveProject(p,'Project reopened');renderProjectModal();}
-function delProject(){removeThing('project',openProjectId,'Project deleted');closeOv('ov-project');}
-function delLine(id){removeThing('line',id,'Sample line deleted');renderProjectModal();}
+/* Samples save as you go; this saves the details editor and a sample
+   being edited, then closes. A half-typed "Add a sample" is asked
+   about rather than silently dropped (closeOv). */
+function saveAndClose(){
+  if(projEditOpen&&!saveProjEdit())return;
+  if(editLineId&&editorDirty()&&!saveEditor())return;
+  closeOv('ov-project');
+}
+/* Completing a project with samples still in the building offers to
+   hand those off too — otherwise they sit on Today's hand-off list
+   long after anyone is looking at the job. */
+function completeProject(){
+  const p=PROJ[openProjectId];if(!p)return;
+  const waiting=(LINESBYPROJ[p.ID]||[]).filter(l=>l.Status==='Arrived');
+  const finish=all=>{
+    const t=today(),b={...p},changes=[{kind:'project',o:p,before:b}];
+    p.Status='Complete';p.Completed=t;
+    const ops=[opSave('project',p,b)];
+    if(all)waiting.forEach(l=>{const lb={...l};l.Status='Delivered';l['Date Delivered']=t;
+      if(!justHandedOff.includes(l.ID))justHandedOff.push(l.ID);
+      changes.push({kind:'line',o:l,before:lb});ops.push(opSave('line',l,lb));});
+    commit(ops);
+    toast('Project complete'+(all?' — '+waiting.length+' handed off':''),{undo:()=>undoChanges(changes,'Project reopened')});
+    renderProjectModal();
+  };
+  if(!waiting.length)return finish(false);
+  ask({title:'Hand off the rest too?',
+    text:plural(waiting.length,'sample')+' from this project '+(waiting.length>1?'are':'is')+' still in the building, waiting to be handed off. Mark '+(waiting.length>1?'them':'it')+' handed off as well?',
+    ok:'Hand off & complete',alt:'Complete only'}).then(r=>{if(r)finish(r===true);});
+}
+function reopenProject(){const p=PROJ[openProjectId];const b={...p};p.Status='Active';p.Completed='';saveProject(p,'Project reopened',b);renderProjectModal();}
+function askDelProject(){
+  const p=PROJ[openProjectId];if(!p)return;
+  const n=(LINESBYPROJ[p.ID]||[]).length;
+  ask({title:'Delete this project?',
+    text:'“'+p['Project Name']+'”'+(n?' and its '+plural(n,'sample')+' are':' is')+' removed for good'+(n?', and those samples stop counting toward supplier scores':'')+'. To put a finished job away, mark it complete instead.',
+    ok:'Delete project',danger:true}).then(ok=>{
+      if(!ok)return;
+      removeThing('project',p.ID,'Project deleted');
+      closeOv('ov-project',{force:true});
+    });
+}
+function projDirty(){
+  const p=PROJ[openProjectId],out=[];
+  if(p&&projEditOpen){
+    const now=['pe-name','pe-client','pe-sales','pe-needed','pe-notes'].map(val);
+    const was=[p['Project Name'],p.Client,p.Salesperson,p['Needed By'],p.Notes].map(v=>String(v==null?'':v).trim());
+    if(now.some((v,i)=>v!==was[i]))out.push('the project details');
+  }
+  if(['al-prod','al-mfr','al-sku','al-notes'].some(val))out.push('the sample you started adding');
+  if(editorDirty())out.push('your edits to a sample');
+  return out.length?'Not saved yet: '+out.join(', ')+'.':'';
+}
+
+/* Everything typed inside a window, by element id, so a redraw can put
+   it back. Leaves out search boxes (they have their own state) and any
+   id starting with one of `drop` — a form being deliberately reset. */
+function grabFields(rootId,drop){
+  const out={};
+  document.querySelectorAll('#'+rootId+' input[id],#'+rootId+' select[id],#'+rootId+' textarea[id]').forEach(e=>{
+    if(e.type==='search'||(drop||[]).some(p=>e.id.indexOf(p)===0))return;
+    out[e.id]=e.value;
+  });
+  return out;
+}
+function putFields(vals){
+  const ids=Object.keys(vals);
+  /* suppliers first: choosing one rebuilds the rep list beneath it */
+  ids.filter(id=>/-sup$/.test(id)).forEach(id=>{
+    const e=document.getElementById(id);
+    if(e&&e.value!==vals[id]){e.value=vals[id];e.dispatchEvent(new Event('change'));}
+  });
+  ids.forEach(id=>{if(/-sup$/.test(id))return;const e=document.getElementById(id);if(e&&e.value!==vals[id])e.value=vals[id];});
+  ['al','np1'].forEach(p=>{if(document.getElementById(p+'-carry')){carryHint(p);updateEta(p);}});
+}
 
 /* add-line form (shared by project modal + new-project modal) */
-function addLineForm(idp){
-  idp=idp||'al';
-  const editing=(idp==='al'&&editLineId);
-  return '<div class="card"><h3 style="font-size:15px;margin-bottom:4px">'+(editing?'Edit sample':'Add a sample')+'</h3><div class="fields">'+
-    '<div><label>Supplier</label><select id="'+idp+'-sup" onchange="lineSupChanged(\''+idp+'\')"><option value="">Choose…</option>'+
-      [...DB.suppliers].sort((a,b)=>a.Name.localeCompare(b.Name)).map(s=>'<option value="'+s.ID+'">'+esc(s.Name)+'</option>').join('')+'</select>'+
-      '<div class="subtle" style="margin-top:3px"><a href="#" onclick="openSupplier(null);return false">+ new supplier</a></div></div>'+
-    '<div><label>Rep</label><select id="'+idp+'-rep"><option value="">—</option></select></div>'+
+function addLineForm(idp,title){
+  return '<div class="card addform"><h3 style="font-size:15px;margin-bottom:4px">'+(title||'Add a sample')+'</h3><div class="fields">'+
+    '<div><label for="'+idp+'-sup">Supplier</label><select id="'+idp+'-sup" onchange="lineSupChanged(\''+idp+'\')">'+supplierOptions()+'</select>'+
+      '<div class="subtle" style="margin-top:3px"><a href="#" onclick="openSupplier(null,\''+idp+'\');return false">+ new supplier</a></div></div>'+
+    '<div><label for="'+idp+'-rep">Rep</label><select id="'+idp+'-rep"><option value="">—</option></select></div>'+
     '<div><label for="'+idp+'-mfr">Manufacturer</label><input id="'+idp+'-mfr" list="'+idp+'-mfr-list" placeholder="e.g. Altro" oninput="carryHint(\''+idp+'\')">'+
       '<datalist id="'+idp+'-mfr-list">'+nameOptions(knownNames(''))+'</datalist>'+
       '<div class="subtle" id="'+idp+'-carry" aria-live="polite" style="margin-top:3px"></div></div>'+
-    '<div><label>Product</label><input id="'+idp+'-prod" placeholder="e.g. Quiet Cover LVT"></div>'+
-    '<div><label>SKU / colour</label><input id="'+idp+'-sku"></div>'+
-    '<div><label>Date ordered</label><input type="date" id="'+idp+'-date" value="'+today()+'" onchange="lineSupChanged(\''+idp+'\')"></div>'+
-    '<div><label>Notes</label><input id="'+idp+'-notes"></div>'+
-    (editing?'<div><label>Expected arrival</label><input type="date" id="al-eta-input"></div>':'')+
+    '<div><label for="'+idp+'-prod">Product</label><input id="'+idp+'-prod" placeholder="e.g. Quiet Cover LVT"></div>'+
+    '<div><label for="'+idp+'-sku">SKU / colour</label><input id="'+idp+'-sku"></div>'+
+    '<div><label for="'+idp+'-date">Date ordered</label><input type="date" id="'+idp+'-date" value="'+today()+'" onchange="updateEta(\''+idp+'\')"></div>'+
+    '<div><label for="'+idp+'-etad">Expected arrival</label><input type="date" id="'+idp+'-etad" oninput="etaTouched[\''+idp+'\']=true"></div>'+
+    '<div><label for="'+idp+'-notes">Notes</label><input id="'+idp+'-notes"></div>'+
     '</div><div class="hint" id="'+idp+'-eta">Pick a supplier to see the estimated arrival.</div>'+
-    (idp==='al'?(editing
-      ?'<div style="margin-top:10px"><button class="btn sm" onclick="submitLine()">Save changes</button> <button class="btn sm ghost" onclick="cancelEditLine()">Cancel</button></div>'
-      :'<div style="margin-top:10px"><button class="btn sm" onclick="submitLine()">'+ic('plus')+' Add sample</button></div>'):'')+
+    (idp==='al'?'<div style="margin-top:10px"><button class="btn sm" onclick="submitLine()">'+ic('plus')+' Add sample</button></div>':'')+
   '</div>';
 }
-function editLine(id){
-  editLineId=id;prefillLine=null;renderProjectModal();
-  const el=document.getElementById('al-sup');if(el)el.scrollIntoView({behavior:'smooth'});
-}
-function cancelEditLine(){editLineId=null;renderProjectModal();}
-function fillLineForm(){
-  const l=DB.lines.find(x=>x.ID===editLineId);if(!l)return;
-  document.getElementById('al-prod').value=l.Product;
-  document.getElementById('al-mfr').value=l.Manufacturer||'';
-  document.getElementById('al-sku').value=l.SKU;
-  document.getElementById('al-date').value=l['Date Ordered'];
-  document.getElementById('al-notes').value=l.Notes;
-  document.getElementById('al-sup').value=l['Supplier ID'];
-  lineSupChanged('al');
-  document.getElementById('al-rep').value=l['Rep ID'];
-  const eta=document.getElementById('al-eta-input');if(eta)eta.value=l['Expected Arrival'];
-}
 function lineSupChanged(idp){
-  const sid=document.getElementById(idp+'-sup').value;
+  const sid=val(idp+'-sup');
   /* what this supplier carries moves to the top of the suggestions */
   document.getElementById(idp+'-mfr-list').innerHTML=nameOptions(knownNames(sid));
-  carryHint(idp);
   const repSel=document.getElementById(idp+'-rep');
   const rr=REPSBYSUP[sid]||[];
-  repSel.innerHTML='<option value="">—</option>'+rr.map(r=>'<option value="'+r.ID+'">'+esc(r.Name||r.Email)+(r['Product Line']?' · '+esc(r['Product Line']):'')+'</option>').join('');
+  repSel.innerHTML='<option value="">—</option>'+rr.map(r=>'<option value="'+esc(r.ID)+'">'+esc(r.Name||r.Email)+(r['Product Line']?' · '+esc(r['Product Line']):'')+'</option>').join('');
   if(rr.length===1)repSel.value=rr[0].ID;
-  const eta=document.getElementById(idp+'-eta');
-  if(!sid){eta.textContent='Pick a supplier to see the estimated arrival.';return;}
+  carryHint(idp);
+  updateEta(idp);
+}
+/* Fills Expected arrival with an estimate — this supplier's median
+   lead time, or with no history yet, the median across all suppliers —
+   and says where it came from. A date you type (the rep's) wins and is
+   never overwritten. Left blank, the sample is flagged for a chase
+   CFG.noEtaDays after it was ordered (isOverdue). */
+function updateEta(idp){
+  const hint=document.getElementById(idp+'-eta'),inp=document.getElementById(idp+'-etad');
+  if(!hint)return;
+  const sid=val(idp+'-sup');
+  if(!sid){if(inp&&!etaTouched[idp])inp.value='';hint.textContent='Pick a supplier to see the estimated arrival.';return;}
+  const e=etaEstimate(sid,val(idp+'-date')||today());
+  if(inp&&!etaTouched[idp])inp.value=e.date;
+  const own=' Change it if the rep gave you a date.';
+  if(e.basis==='supplier')hint.innerHTML='Estimated arrival ~ <b>'+nice(e.date)+'</b> (median '+e.median+' days over '+e.count+' orders'+(e.median>=CFG.slowDays?' — <b>this supplier runs slow</b>':'')+').'+own;
+  else if(e.basis==='all')hint.innerHTML='No history with this supplier yet — <b>'+nice(e.date)+'</b> is the median across all suppliers ('+e.median+' days).'+own;
+  else hint.textContent='No history to estimate from yet — enter the rep’s date, or leave it blank and it’s flagged for a chase after '+CFG.noEtaDays+' days.';
+}
+function etaEstimate(sid,od){
   const st=supStats(sid);
-  const od=document.getElementById(idp+'-date').value||today();
-  if(st.median!=null){
-    eta.innerHTML='Estimated arrival ~ <b>'+nice(addDays(od,st.median))+'</b> (median '+st.median+' days over '+st.leadCount+' orders'+(st.median>=SLOW?' — <b>this supplier runs slow</b>':'')+')';
-  }else eta.textContent='No history with this supplier yet — arrival unknown until data builds.';
+  if(st.median!=null)return {date:addDays(od,st.median),basis:'supplier',median:st.median,count:st.leadCount};
+  const all=median(DB.lines.filter(l=>!isExcluded(l)&&l['Date Ordered']&&l['Date Arrived'])
+    .map(l=>dDiff(l['Date Ordered'],l['Date Arrived'])).filter(n=>n>=0));
+  if(all!=null)return {date:addDays(od,all),basis:'all',median:all};
+  return {date:'',basis:null};
 }
 /* "Who do we order Altro through?" answered under the Manufacturer
    field: every supplier whose tags list that name (exact match — the
@@ -1232,104 +1580,219 @@ function lineSupChanged(idp){
    and nothing shows when it's the only one. */
 function carryHint(idp){
   const el=document.getElementById(idp+'-carry');if(!el)return;
-  const m=document.getElementById(idp+'-mfr').value.trim().toLowerCase();
-  const sid=document.getElementById(idp+'-sup').value;
+  const m=val(idp+'-mfr').toLowerCase();
+  const sid=val(idp+'-sup');
   const who=m?DB.suppliers.filter(s=>supTags(s).some(t=>t.toLowerCase()===m)).sort((a,b)=>a.Name.localeCompare(b.Name)):[];
   const others=who.filter(s=>s.ID!==sid);
   el.innerHTML=others.length?(others.length<who.length?'Also carried by ':'Carried by ')+
     others.map(s=>'<a href="#" onclick="pickCarrier(\''+idp+'\',\''+s.ID+'\');return false">'+esc(s.Name)+'</a>').join(' · '):'';
 }
 function pickCarrier(idp,sid){document.getElementById(idp+'-sup').value=sid;lineSupChanged(idp);}
-function readLineForm(idp){
-  idp=idp||'al';
-  const sid=document.getElementById(idp+'-sup').value;
+function readLineForm(idp,pid){
+  const sid=val(idp+'-sup');
   if(!sid){toast('Pick a supplier first',true);return null;}
-  const od=document.getElementById(idp+'-date').value||today();
-  const st=supStats(sid);
-  return {ID:newId('L'),'Project ID':openProjectId,'Supplier ID':sid,'Rep ID':document.getElementById(idp+'-rep').value,
-    Product:document.getElementById(idp+'-prod').value.trim(),Manufacturer:document.getElementById(idp+'-mfr').value.trim(),
-    SKU:document.getElementById(idp+'-sku').value.trim(),
-    'Date Ordered':od,'Expected Arrival':st.median!=null?addDays(od,st.median):'',
-    Status:'Ordered',Accuracy:'','Date Arrived':'','Date Delivered':'',Notes:document.getElementById(idp+'-notes').value.trim()};
+  const prod=val(idp+'-prod');
+  if(!prod){toast('Give the sample a product name',true);return null;}
+  const od=val(idp+'-date')||today(),eta=val(idp+'-etad');
+  if(eta&&eta<od){toast('Expected arrival can’t be before the order date',true);return null;}
+  return {ID:newId('L'),'Project ID':pid,'Supplier ID':sid,'Rep ID':val(idp+'-rep'),
+    Product:prod,Manufacturer:val(idp+'-mfr'),SKU:val(idp+'-sku'),
+    'Date Ordered':od,'Expected Arrival':eta,
+    Status:'Ordered',Accuracy:'','Date Arrived':'','Date Delivered':'',Notes:val(idp+'-notes')};
 }
+/* After adding a sample the form clears, but the supplier, rep and
+   order date stay: five samples from Shaw for one job is the norm. */
 function submitLine(){
-  if(editLineId){
-    const l=DB.lines.find(x=>x.ID===editLineId);if(!l){editLineId=null;return;}
-    const sid=document.getElementById('al-sup').value;
-    if(!sid){toast('Pick a supplier first',true);return;}
-    const prod=document.getElementById('al-prod').value.trim();
-    if(!prod){toast('Give the sample a product name',true);return;}
-    l['Supplier ID']=sid;l['Rep ID']=document.getElementById('al-rep').value;
-    l.Product=prod;l.Manufacturer=document.getElementById('al-mfr').value.trim();
-    l.SKU=document.getElementById('al-sku').value.trim();
-    l['Date Ordered']=document.getElementById('al-date').value||l['Date Ordered'];
-    l['Expected Arrival']=document.getElementById('al-eta-input').value;
-    l.Notes=document.getElementById('al-notes').value.trim();
-    editLineId=null;saveLine(l,'Sample updated');renderProjectModal();return;
-  }
-  const l=readLineForm('al');if(!l)return;
-  if(!l.Product){toast('Give the sample a product name',true);return;}
-  saveLine(l,'Sample added');
-  const p=PROJ[openProjectId];if(p.Status==='Complete'){p.Status='Active';p.Completed='';saveProject(p);}
-  renderProjectModal();
+  const l=readLineForm('al',openProjectId);if(!l)return;
+  const ops=[opSave('line',l)];
+  const p=PROJ[openProjectId];
+  if(p&&p.Status==='Complete'){const b={...p};p.Status='Active';p.Completed='';ops.push(opSave('project',p,b));}
+  stickyLine={sup:l['Supplier ID'],rep:l['Rep ID'],date:l['Date Ordered']};
+  commit(ops,'Sample added');
+  etaTouched.al=false;
+  renderProjectModal(true);
+}
+function applySticky(){
+  const s=stickyLine;stickyLine=null;
+  const sel=document.getElementById('al-sup');if(!s||!sel||!SUP[s.sup])return;
+  sel.value=s.sup;lineSupChanged('al');
+  document.getElementById('al-rep').value=s.rep||'';
+  document.getElementById('al-date').value=s.date||today();
+  updateEta('al');
 }
 function duplicateLine(id){
   const l=DB.lines.find(x=>x.ID===id);if(!l)return;
-  editLineId=null;
   prefillLine={sup:l['Supplier ID'],rep:l['Rep ID'],prod:l.Product,mfr:l.Manufacturer||'',sku:l.SKU,notes:l.Notes};
-  renderProjectModal();
-  document.getElementById('al-sup').scrollIntoView({behavior:'smooth'});
+  etaTouched.al=false;
+  renderProjectModal(true);
+  document.getElementById('al-sup').scrollIntoView({behavior:'smooth',block:'center'});
   toast('Copied — tweak and add');
 }
 function applyPrefill(){
   const f=prefillLine;prefillLine=null;
   document.getElementById('al-sup').value=f.sup;lineSupChanged('al');
-  document.getElementById('al-rep').value=f.rep;
-  document.getElementById('al-prod').value=f.prod;document.getElementById('al-mfr').value=f.mfr;
-  document.getElementById('al-sku').value=f.sku;
-  document.getElementById('al-notes').value=f.notes;
+  document.getElementById('al-rep').value=f.rep||'';
+  document.getElementById('al-prod').value=f.prod||'';document.getElementById('al-mfr').value=f.mfr;
+  document.getElementById('al-sku').value=f.sku||'';
+  document.getElementById('al-notes').value=f.notes||'';
   carryHint('al');
+}
+
+/* ======================= sample editor (inline) ===================== */
+/* One editor for a sample wherever it's listed — the project window
+   and supplier history both open it in place of the row. */
+function repOptions(sid,sel){
+  const rr=REPSBYSUP[sid]||[];
+  return '<option value="">—</option>'+
+    (sel&&!rr.some(r=>r.ID===sel)?'<option value="'+esc(sel)+'" selected>(rep no longer listed)</option>':'')+
+    rr.map(r=>'<option value="'+esc(r.ID)+'"'+(sel===r.ID?' selected':'')+'>'+esc(r.Name||r.Email)+'</option>').join('');
+}
+function lineEditor(l){
+  /* a project or supplier that no longer exists keeps its ID as an
+     option, so saving other fields doesn't quietly move the sample */
+  const projOpts=(PROJ[l['Project ID']]?'':'<option value="'+esc(l['Project ID'])+'" selected>(project no longer exists)</option>')+
+    [...DB.projects].sort((a,b)=>(a['Project Name']||'').localeCompare(b['Project Name']||''))
+    .map(p=>'<option value="'+esc(p.ID)+'"'+(l['Project ID']===p.ID?' selected':'')+'>'+esc(p['Project Name'])+'</option>').join('');
+  const supOpts=(SUP[l['Supplier ID']]?'':'<option value="'+esc(l['Supplier ID'])+'" selected>(unknown supplier)</option>')+
+    [...DB.suppliers].sort((a,b)=>a.Name.localeCompare(b.Name))
+    .map(s=>'<option value="'+esc(s.ID)+'"'+(l['Supplier ID']===s.ID?' selected':'')+'>'+esc(s.Name)+'</option>').join('');
+  const statOpts=['Ordered','Arrived','Delivered']
+    .map(v=>'<option'+(l.Status===v?' selected':'')+'>'+v+'</option>').join('');
+  const accOpts=ACCURACY_OPTS
+    .map(v=>'<option value="'+v+'"'+(l.Accuracy===v?' selected':'')+'>'+(v||'Not rated')+'</option>').join('');
+
+  return '<div class="linecard histedit" id="line-editor">'+
+    '<div class="fields">'+
+      '<div><label for="he-prod">Product</label><input id="he-prod" value="'+esc(l.Product)+'"></div>'+
+      '<div><label for="he-sku">SKU / colour</label><input id="he-sku" value="'+esc(l.SKU)+'"></div>'+
+      '<div><label for="he-proj">Project</label><select id="he-proj">'+projOpts+'</select></div>'+
+      '<div><label for="he-sup">Supplier</label><select id="he-sup" onchange="editorSupChanged()">'+supOpts+'</select></div>'+
+      '<div><label for="he-mfr">Manufacturer</label><input id="he-mfr" list="he-mfr-list" value="'+esc(l.Manufacturer)+'">'+
+        '<datalist id="he-mfr-list">'+nameOptions(knownNames(l['Supplier ID']))+'</datalist></div>'+
+      '<div><label for="he-rep">Rep</label><select id="he-rep">'+repOptions(l['Supplier ID'],l['Rep ID'])+'</select></div>'+
+      '<div><label for="he-stat">Status</label><select id="he-stat">'+statOpts+'</select></div>'+
+      '<div><label for="he-ord">Date ordered</label><input type="date" id="he-ord" value="'+esc(l['Date Ordered'])+'"></div>'+
+      '<div><label for="he-eta">Expected arrival</label><input type="date" id="he-eta" value="'+esc(l['Expected Arrival'])+'"></div>'+
+      '<div><label for="he-arr">Date arrived</label><input type="date" id="he-arr" value="'+esc(l['Date Arrived'])+'"></div>'+
+      '<div><label for="he-del">Date handed off</label><input type="date" id="he-del" value="'+esc(l['Date Delivered'])+'"></div>'+
+      '<div><label for="he-acc">Accuracy</label><select id="he-acc">'+accOpts+'</select></div>'+
+    '</div>'+
+    '<label for="he-notes">Notes</label><input id="he-notes" value="'+esc(l.Notes)+'">'+
+    '<label for="he-ex">Exclude from scoring <span class="subtle">— leave blank to count normally; any text here removes it from the median and accuracy</span></label>'+
+    '<input id="he-ex" placeholder="e.g. late receiving on our end" value="'+esc(exReason(l))+'">'+
+    '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+
+      '<button class="btn sm" onclick="saveEditor()">'+ic('check')+' Save</button>'+
+      '<button class="btn sm ghost" onclick="cancelEditor()">Cancel</button>'+
+      '<span style="flex:1"></span>'+
+      '<button class="btn sm danger" onclick="askDelLine(\''+l.ID+'\')">'+ic('trash')+' Delete sample</button>'+
+    '</div></div>';
+}
+function editorSupChanged(){
+  const sid=val('he-sup');
+  document.getElementById('he-rep').innerHTML=repOptions(sid,'');
+  document.getElementById('he-mfr-list').innerHTML=nameOptions(knownNames(sid));
+}
+/* the editor's fields under the record's own keys, exactly as typed */
+function editorRaw(){
+  return {Product:val('he-prod'),SKU:val('he-sku'),'Project ID':val('he-proj'),'Supplier ID':val('he-sup'),
+    Manufacturer:val('he-mfr'),'Rep ID':val('he-rep'),Status:val('he-stat'),'Date Ordered':val('he-ord'),
+    'Expected Arrival':val('he-eta'),'Date Arrived':val('he-arr'),'Date Delivered':val('he-del'),
+    Accuracy:val('he-acc'),Notes:val('he-notes'),Exclude:val('he-ex')};
+}
+function editorDirty(){
+  const l=editLineId&&DB.lines.find(x=>x.ID===editLineId);
+  if(!l||!document.getElementById('he-prod'))return false;
+  const v=editorRaw();
+  return Object.keys(v).some(k=>v[k]!==String(k==='Exclude'?exReason(l):(l[k]==null?'':l[k])).trim());
+}
+/* editorRaw, validated, with status and dates kept from contradicting
+   each other. Null (after saying why) if it can't be saved. */
+function readEditor(){
+  const v=editorRaw();
+  if(!v.Product){toast('Give the sample a product name',true);return null;}
+  if(v.Status==='Ordered'){v['Date Arrived']='';v['Date Delivered']='';v.Accuracy='';}
+  if(v.Status==='Arrived'){v['Date Delivered']='';if(!v['Date Arrived'])v['Date Arrived']=today();}
+  if(v.Status==='Delivered'){if(!v['Date Arrived'])v['Date Arrived']=v['Date Ordered']||today();if(!v['Date Delivered'])v['Date Delivered']=today();}
+  if(v['Date Ordered']&&v['Date Arrived']&&v['Date Arrived']<v['Date Ordered']){toast('Arrival cannot be before the order date',true);return null;}
+  if(v['Date Arrived']&&v['Date Delivered']&&v['Date Delivered']<v['Date Arrived']){toast('Hand-off cannot be before arrival',true);return null;}
+  return v;
+}
+function redrawLines(){
+  if(isOpen('ov-history'))renderHistory();
+  if(isOpen('ov-project'))renderProjectModal();
+}
+function editLine(id){
+  const go=()=>{
+    editLineId=id;prefillLine=null;dropNext=['he-'];
+    redrawLines();
+    const el=document.getElementById('line-editor');if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});
+  };
+  if(editLineId&&editLineId!==id&&editorDirty())
+    ask({title:'Discard your edits?',text:'Another sample has unsaved changes.',ok:'Discard',danger:true}).then(ok=>{if(ok)go();});
+  else go();
+}
+function cancelEditor(){editLineId=null;dropNext=['he-'];redrawLines();}
+function saveEditor(){
+  const l=DB.lines.find(x=>x.ID===editLineId);
+  if(!l){editLineId=null;redrawLines();return true;}
+  const v=readEditor();if(!v)return false;
+  const before={...l};Object.assign(l,v);
+  editLineId=null;dropNext=['he-'];
+  saveLine(l,'Sample updated',before);
+  redrawLines();
+  return true;
+}
+function askDelLine(id){
+  const l=DB.lines.find(x=>x.ID===id);if(!l)return;
+  const sn=(SUP[l['Supplier ID']]||{}).Name||'the supplier';
+  ask({title:'Delete this sample?',
+    text:'“'+(l.Product||'This sample')+'” is removed for good — from its project and from '+sn+'’s scoring.',
+    ok:'Delete',danger:true}).then(ok=>{
+      if(!ok)return;
+      if(editLineId===id){editLineId=null;dropNext=['he-'];}
+      removeThing('line',id,'Sample deleted');
+      redrawLines();
+    });
 }
 
 /* new project modal */
 function openNewProject(){
-  openProjectId=null;
-  document.getElementById('md-new').innerHTML='<button class="close" onclick="closeOv(\'ov-new\')">'+ic('x')+'</button>'+
+  openProjectId=null;etaTouched.np1=false;
+  document.getElementById('md-new').innerHTML='<button class="close" aria-label="Close" onclick="closeOv(\'ov-new\')">'+ic('x')+'</button>'+
     '<h2>New project</h2><div class="fields">'+
-    '<div><label>Project name</label><input id="np-name" placeholder="e.g. Pickleball Court"></div>'+
-    '<div><label>Client</label><input id="np-client"></div>'+
-    '<div><label>Salesperson</label><select id="np-sales">'+DB.team.map(t=>'<option>'+esc(t.Name)+'</option>').join('')+'</select></div>'+
-    '<div><label>Needed by</label><input type="date" id="np-needed"></div></div>'+
-    '<label>Notes</label><textarea id="np-notes" rows="2"></textarea>'+
-    '<hr class="soft"><h3 style="font-size:15px">First sample</h3>'+addLineForm('np1')+
+    '<div><label for="np-name">Project name</label><input id="np-name" placeholder="e.g. Pickleball Court"></div>'+
+    '<div><label for="np-client">Client</label><input id="np-client"></div>'+
+    '<div><label for="np-sales">Salesperson</label><select id="np-sales">'+salesOptions('')+'</select></div>'+
+    '<div><label for="np-needed">Needed by</label><input type="date" id="np-needed"></div></div>'+
+    '<label for="np-notes">Notes</label><textarea id="np-notes" rows="2"></textarea>'+
+    '<hr class="soft">'+addLineForm('np1','First sample <span class="subtle">— optional</span>')+
     '<div style="margin-top:14px"><button class="btn" onclick="submitNewProject()">Create project</button> <span class="subtle">You can add more samples right after.</span></div>';
-  document.getElementById('ov-new').classList.add('open');
+  document.getElementById('md-new').scrollTop=0;document.getElementById('ov-new').scrollTop=0;
+  openOv('ov-new');
+}
+function newProjDirty(){
+  return ['np-name','np-client','np-needed','np-notes','np1-prod','np1-mfr','np1-sku','np1-notes'].some(val)
+    ?'This project hasn’t been created yet — what you typed will be lost.':'';
 }
 function submitNewProject(){
-  const name=document.getElementById('np-name').value.trim();
+  const name=val('np-name');
   if(!name){toast('The project needs a name',true);return;}
-  const p={ID:newId('P'),'Project Name':name,Client:document.getElementById('np-client').value.trim(),
-    Salesperson:document.getElementById('np-sales').value,'Needed By':document.getElementById('np-needed').value,
-    Status:'Active',Notes:document.getElementById('np-notes').value.trim(),Created:today(),Completed:''};
-  saveProject(p,'Project created');
-  openProjectId=p.ID;
-  const sid=document.getElementById('np1-sup').value;
-  if(sid){
-    const od=document.getElementById('np1-date').value||today();
-    const st=supStats(sid);
-    saveLine({ID:newId('L'),'Project ID':p.ID,'Supplier ID':sid,'Rep ID':document.getElementById('np1-rep').value,
-      Product:document.getElementById('np1-prod').value.trim(),Manufacturer:document.getElementById('np1-mfr').value.trim(),
-      SKU:document.getElementById('np1-sku').value.trim(),
-      'Date Ordered':od,'Expected Arrival':st.median!=null?addDays(od,st.median):'',
-      Status:'Ordered',Accuracy:'','Date Arrived':'','Date Delivered':'',Notes:document.getElementById('np1-notes').value.trim()});
-  }
-  closeOv('ov-new');openProject(p.ID);
+  const p={ID:newId('P'),'Project Name':name,Client:val('np-client'),
+    Salesperson:val('np-sales'),'Needed By':val('np-needed'),
+    Status:'Active',Notes:val('np-notes'),Created:today(),Completed:''};
+  /* the first sample is optional — but one that's been started must be whole */
+  let l=null;
+  if(['np1-sup','np1-prod','np1-mfr','np1-sku','np1-notes'].some(val)){l=readLineForm('np1',p.ID);if(!l)return;}
+  commit([opSave('project',p),l&&opSave('line',l)],'Project created');
+  /* this window's history entry passes straight to the project's */
+  closeOv('ov-new',{force:true,keepEntry:true});
+  openProject(p.ID,true);
 }
 
 /* ========================= SUPPLIERS view ========================== */
 function speedBadge(st){
   if(st.median==null)return'<span class="pill neutral">Speed: building…</span>';
-  const cls=st.median>=SLOW?'warn':'Arrived';
+  const cls=st.median>=CFG.slowDays?'warn':'Arrived';
   return '<span class="pill '+cls+'">Median '+st.median+'d · '+st.leadCount+' orders</span>';
 }
 function accBadge(st){
@@ -1361,8 +1824,9 @@ function renderSupplierList(){
       (s['Sample Dept Email']?'<span>'+ic('mail')+' <a href="mailto:'+esc(s['Sample Dept Email'])+'">'+esc(s['Sample Dept Email'])+'</a> <span class="subtle">(sample dept)</span></span>':'')+
       (s.Username?'<span>'+ic('user')+' '+esc(s.Username)+' <button class="copybtn" onclick="copyTxt(this.dataset.v)" data-v="'+esc(s.Username)+'">copy</button></span>':'')+
       '</div>'+
+      /* a rep's product line is a name, not a status: a plain tag */
       (rr.length?'<div class="replist">'+rr.map(r=>'<div class="reprow"><b>'+esc(r.Name||'—')+'</b>'+
-        (r['Product Line']?'<span class="pl">'+esc(r['Product Line'])+'</span>':'')+
+        (r['Product Line']?'<span class="tag">'+esc(r['Product Line'])+'</span>':'')+
         (r.Email?'<a href="mailto:'+esc(r.Email)+'">'+esc(r.Email)+'</a>':'')+
         (r.Phone?'<a href="tel:'+esc(r.Phone)+'">'+esc(r.Phone)+'</a>':'')+
         (r.Notes?'<span class="subtle">'+esc(r.Notes)+'</span>':'')+'</div>').join('')+'</div>':'')+
@@ -1377,54 +1841,81 @@ function tagSearch(t){
   renderSupplierList();window.scrollTo({top:0,behavior:'smooth'});
 }
 
-/* supplier modal (edit or create) */
-let editSupId=null, repDraft=[], tagDraft=[];
-function openSupplier(sid){
-  editSupId=sid;
+/* supplier modal (edit or create). `from` is the add-sample form ('al'
+   or 'np1') that asked for a new supplier: once saved, it's chosen
+   there and nothing else typed in that form is lost. */
+let editSupId=null, repDraft=[], tagDraft=[], repRemoved=[], supOrig='', supFrom=null;
+function openSupplier(sid,from){
+  supFrom=from||null;
+  loadSupplier(sid);
+  document.getElementById('md-supplier').scrollTop=0;document.getElementById('ov-supplier').scrollTop=0;
+  openOv('ov-supplier');
+}
+function loadSupplier(sid){
+  editSupId=sid;repRemoved=[];
+  document.getElementById('md-supplier').innerHTML='';   /* nothing carries over from the last one */
   const s=sid?SUP[sid]:{Name:'',Website:'',Username:'','Sample Dept Email':'',Notes:''};
   tagDraft=supTags(s);
   repDraft=(sid?(REPSBYSUP[sid]||[]):[]).map(r=>({...r}));
   if(!repDraft.length)repDraft.push(blankRep());
   renderSupplierModal(s);
-  document.getElementById('ov-supplier').classList.add('open');
+  supOrig=supState();
 }
 function blankRep(){return {ID:'',Name:'',Email:'',Phone:'','Product Line':'',Notes:'',_new:true};}
 function renderSupplierModal(s){
   s=s||readSupForm();
-  let h='<button class="close" onclick="closeOv(\'ov-supplier\')">'+ic('x')+'</button>'+
+  const mv=val('sf-merge'),mb=document.querySelector('#md-supplier .mergebox'),mOpen=!!(mb&&mb.open);
+  const others=editSupId?DB.suppliers.filter(x=>x.ID!==editSupId).sort((a,b)=>a.Name.localeCompare(b.Name)):[];
+  let h='<button class="close" aria-label="Close" onclick="closeOv(\'ov-supplier\')">'+ic('x')+'</button>'+
     '<h2>'+(editSupId?'Edit supplier':'New supplier')+'</h2>'+
-    '<div class="hint">Tip: a dedicated <b>sample department email</b> is always more reliable than a rep\'s inbox — record both when you can.</div>'+
     '<div class="fields">'+
-    '<div><label>Supplier name</label><input id="sf-name" value="'+esc(s.Name)+'"></div>'+
-    '<div><label>Website</label><input id="sf-web" value="'+esc(s.Website)+'" placeholder="shawcontract.com"></div>'+
-    '<div><label>Portal username</label><input id="sf-user" value="'+esc(s.Username)+'"><div class="subtle" style="margin-top:3px">Keep the password in your password manager.</div></div>'+
-    '<div><label>Sample dept email</label><input id="sf-semail" value="'+esc(s['Sample Dept Email'])+'"></div></div>'+
+    '<div><label for="sf-name">Supplier name</label><input id="sf-name" value="'+esc(s.Name)+'" oninput="dupHint()">'+
+      '<div class="subtle" id="sf-dup" aria-live="polite"></div></div>'+
+    '<div><label for="sf-web">Website</label><input id="sf-web" value="'+esc(s.Website)+'" placeholder="shawcontract.com"></div>'+
+    '<div><label for="sf-user">Portal username</label><input id="sf-user" value="'+esc(s.Username)+'"><div class="subtle" style="margin-top:3px">Keep the password in your password manager.</div></div>'+
+    '<div><label for="sf-semail">Sample dept email</label><input id="sf-semail" value="'+esc(s['Sample Dept Email'])+'">'+
+      '<div class="subtle" style="margin-top:3px">More reliable than a rep’s inbox — record both when you can.</div></div></div>'+
     '<label for="sf-tag-in">Tags <span class="subtle">— the lines this supplier carries</span></label>'+
     '<div id="sf-tags">'+tagField()+'</div>'+
     '<div class="subtle" style="margin-top:3px">Enter or a comma after each. Search any of them from the Suppliers list.</div>'+
-    '<label>Notes (account #s, shipping quirks, portal info…)</label><textarea id="sf-notes" rows="2">'+esc(s.Notes)+'</textarea>'+
+    '<label for="sf-notes">Notes (account #s, shipping quirks, portal info…)</label><textarea id="sf-notes" rows="2">'+esc(s.Notes)+'</textarea>'+
     '<hr class="soft"><h3 style="font-size:15px">Reps <span class="subtle">— one per product line if needed (e.g. carpet vs. LVT)</span></h3>';
   repDraft.forEach((r,i)=>{
     h+='<div class="linecard"><div class="fields">'+
-      '<div><label>Name</label><input id="rf-name-'+i+'" value="'+esc(r.Name)+'"></div>'+
-      '<div><label>Product line</label><input id="rf-pl-'+i+'" value="'+esc(r['Product Line'])+'" placeholder="Carpet / LVT / …"></div>'+
-      '<div><label>Email</label><input id="rf-email-'+i+'" value="'+esc(r.Email)+'"></div>'+
-      '<div><label>Phone</label><input id="rf-phone-'+i+'" value="'+esc(r.Phone)+'"></div></div>'+
+      '<div><label for="rf-name-'+i+'">Name</label><input id="rf-name-'+i+'" value="'+esc(r.Name)+'"></div>'+
+      '<div><label for="rf-pl-'+i+'">Product line</label><input id="rf-pl-'+i+'" value="'+esc(r['Product Line'])+'" placeholder="Carpet / LVT / …"></div>'+
+      '<div><label for="rf-email-'+i+'">Email</label><input id="rf-email-'+i+'" value="'+esc(r.Email)+'"></div>'+
+      '<div><label for="rf-phone-'+i+'">Phone</label><input id="rf-phone-'+i+'" value="'+esc(r.Phone)+'"></div></div>'+
       '<div style="margin-top:6px;display:flex;justify-content:space-between;align-items:center;gap:8px">'+
-      '<input id="rf-notes-'+i+'" placeholder="Rep notes" value="'+esc(r.Notes)+'" style="max-width:70%">'+
+      '<input id="rf-notes-'+i+'" placeholder="Rep notes" aria-label="Rep notes" value="'+esc(r.Notes)+'" style="max-width:70%">'+
       '<button class="btn sm danger" onclick="removeRepDraft('+i+')">Remove</button></div></div>';
   });
   h+='<button class="btn sm ghost" onclick="addRepDraft()">'+ic('plus')+' Add another rep</button>'+
      '<hr class="soft"><div class="supfoot"><button class="btn" onclick="submitSupplier()">Save supplier</button>'+
-     (editSupId?'<button class="btn sm danger" onclick="delSupplier()">'+ic('trash')+' Delete supplier</button>':'')+'</div>';
+     (editSupId?'<button class="btn sm danger" onclick="delSupplier()">'+ic('trash')+' Delete supplier</button>':'')+'</div>'+
+     (others.length&&modern()?'<details class="mergebox"'+(mOpen?' open':'')+'><summary>Merge into another supplier…</summary>'+
+       '<p class="subtle">For a duplicate. Its samples and reps move to the supplier you keep, its tags and any contact details that one is missing carry over, and this one is deleted.</p>'+
+       '<div class="mergerow"><select id="sf-merge" aria-label="Supplier to keep"><option value="">Choose the one to keep…</option>'+
+       others.map(x=>'<option value="'+esc(x.ID)+'"'+(mv===x.ID?' selected':'')+'>'+esc(x.Name)+'</option>').join('')+'</select>'+
+       '<button class="btn sm ghost" onclick="mergeSupplier()">Merge</button></div></details>':'');
   document.getElementById('md-supplier').innerHTML=h;
+  dupHint();
 }
 function readSupForm(){
   const pend=document.getElementById('sf-tag-in');     /* typed but never committed still counts */
-  if(pend){addTags(pend.value);pend.value='';}
+  if(pend&&pend.value.trim()){addTags(pend.value);drawTags();}   /* ...and shows as a chip, if the save stops short */
   return {Name:val('sf-name'),Website:val('sf-web'),Username:val('sf-user'),'Sample Dept Email':val('sf-semail'),Notes:val('sf-notes'),
     Tags:tagDraft.join(', ')};
 }
+/* the whole form as one string, to tell whether anything changed */
+function supState(){
+  const pend=document.getElementById('sf-tag-in');
+  return JSON.stringify([['sf-name','sf-web','sf-user','sf-semail','sf-notes'].map(val),
+    tagDraft.concat(pend&&pend.value.trim()?[pend.value.trim()]:[]),
+    repDraft.map((r,i)=>['rf-name-','rf-pl-','rf-email-','rf-phone-','rf-notes-'].map(k=>val(k+i))),
+    repRemoved]);
+}
+function supDirty(){return isOpen('ov-supplier')&&supState()!==supOrig?'Your changes to this supplier haven’t been saved.':'';}
 /* Tag editor. Enter or a comma turns what's typed into a chip, and so
    does picking a suggestion; Backspace in an empty field takes the last
    chip back to fix. Text still sitting in the field when you save is
@@ -1474,58 +1965,279 @@ function dropTag(i){
   const pend=document.getElementById('sf-tag-in').value;
   tagDraft.splice(i,1);drawTags(pend);
 }
+/* Near-duplicates — "Metro Wallcoverins" beside "Metro Wallcoverings",
+   "Mohawk" beside "Mohawk Group" — caught while the name is typed, not
+   after samples have piled up under both. Compares letters and digits
+   only: the same name, one the start of the other (5+ characters), or
+   within two typos (6+ characters). */
+function normName(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]/g,'');}
+function editDistance(a,b){
+  let prev=Array.from({length:b.length+1},(_,j)=>j);
+  for(let i=1;i<=a.length;i++){
+    const cur=[i];
+    for(let j=1;j<=b.length;j++)cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));
+    prev=cur;
+  }
+  return prev[b.length];
+}
+function nearName(a,b){
+  a=normName(a);b=normName(b);
+  if(!a||!b)return false;
+  if(a===b)return true;
+  const n=Math.min(a.length,b.length);
+  if(n>=5&&(a.indexOf(b)===0||b.indexOf(a)===0))return true;
+  return n>=6&&Math.abs(a.length-b.length)<=2&&editDistance(a,b)<=2;
+}
+function similarSuppliers(name){return DB.suppliers.filter(s=>s.ID!==editSupId&&nearName(s.Name,name));}
+function dupHint(){
+  const el=document.getElementById('sf-dup');if(!el)return;
+  const hits=similarSuppliers(val('sf-name'));
+  el.innerHTML=hits.length?(editSupId?'Possible duplicate of ':'Already on the list: ')+
+    hits.map(s=>'<a href="#" onclick="pickExisting(\''+s.ID+'\');return false">'+esc(s.Name)+'</a>').join(' · ')+
+    (editSupId&&modern()?' — see Merge below.':''):'';
+}
+/* Clicked the existing supplier in the duplicate hint. Mid-way through
+   adding a sample, that means "use this one": it's chosen in the form.
+   Otherwise the window switches to it. */
+function pickExisting(sid){
+  const go=()=>{
+    if(supFrom&&!editSupId){const from=supFrom;closeOv('ov-supplier',{force:true});selectSupplierIn(from,sid);}
+    else{loadSupplier(sid);document.getElementById('md-supplier').scrollTop=0;document.getElementById('ov-supplier').scrollTop=0;}
+  };
+  /* abandoning a half-typed NEW supplier is the point of the click */
+  if(!editSupId||!supDirty())return go();
+  ask({title:'Discard changes?',text:'Your changes to this supplier haven’t been saved.',ok:'Discard',danger:true}).then(ok=>{if(ok)go();});
+}
+function selectSupplierIn(idp,sid){const sel=document.getElementById(idp+'-sup');if(sel&&SUP[sid]){sel.value=sid;lineSupChanged(idp);}}
 /* Delete is for suppliers added by mistake. One with samples on record
-   stays — those samples are project history and the supplier's scoring.
-   The server re-checks, so a page that's out of date can't get round it. */
+   stays — those samples are project history and the supplier's scoring —
+   and a duplicate is merged instead. The server re-checks, so a page
+   that's out of date can't get round it. */
 function delSupplier(){
   const s=SUP[editSupId];if(!s)return;
   const n=DB.lines.filter(l=>l['Supplier ID']===s.ID).length;
   if(n){
-    alert(s.Name+' has '+n+' sample'+(n>1?'s':'')+' on record, so it can’t be deleted.\n\n'+
-      'If it’s a duplicate: open its History, Edit each sample and switch the Supplier to the right one. Once it has none left, you can delete it.');
+    ask({title:'Can’t delete '+s.Name,
+      text:s.Name+' has '+plural(n,'sample')+' on record, so it stays. If it’s a duplicate, '+
+        (modern()?'use “Merge into another supplier” at the bottom of this window: its samples move to the supplier you keep.'
+                 :'open its History, Edit each sample and switch the Supplier to the right one. Once it has none left, you can delete it.'),
+      ok:'OK',cancel:false});
     return;
   }
   const nr=(REPSBYSUP[s.ID]||[]).length;
-  if(!confirm('Delete '+s.Name+(nr?' and its '+nr+' rep'+(nr>1?'s':''):'')+'? This can’t be undone.'))return;
-  removeThing('supplier',s.ID,'Supplier deleted');
-  editSupId=null;closeOv('ov-supplier');
-  if(document.getElementById('ov-project').classList.contains('open'))renderProjectModal();
+  ask({title:'Delete '+s.Name+'?',text:(nr?'Its '+plural(nr,'rep')+' '+(nr>1?'go':'goes')+' with it. ':'')+'This can’t be undone.',
+    ok:'Delete supplier',danger:true}).then(ok=>{
+      if(!ok)return;
+      removeThing('supplier',s.ID,'Supplier deleted');
+      editSupId=null;closeOv('ov-supplier',{force:true});
+      if(isOpen('ov-project'))renderProjectModal();
+    });
 }
-function val(id){const e=document.getElementById(id);return e?e.value.trim():'';}
+/* Folds this (duplicate) supplier into the one picked. Code.gs does the
+   real work in one locked request; the same fold happens here so the
+   screen shows the result straight away. */
+function mergeSupplier(){
+  const from=SUP[editSupId],into=SUP[val('sf-merge')];
+  if(!from||!into){toast('Pick the supplier to keep',true);return;}
+  const nl=DB.lines.filter(l=>l['Supplier ID']===from.ID).length,nr=(REPSBYSUP[from.ID]||[]).length;
+  const moving=[nl?plural(nl,'sample'):'',nr?plural(nr,'rep'):''].filter(Boolean).join(' and ');
+  ask({title:'Merge '+from.Name+' into '+into.Name+'?',
+    text:(moving?'Moves '+moving+' to '+into.Name+', then deletes ':'Deletes ')+from.Name+'. Its tags, and any contact details '+into.Name+' is missing, carry over. This can’t be undone.',
+    ok:'Merge',danger:true}).then(ok=>{
+      if(!ok)return;
+      DB.lines.forEach(l=>{if(l['Supplier ID']===from.ID)l['Supplier ID']=into.ID;});
+      DB.reps.forEach(r=>{if(r['Supplier ID']===from.ID)r['Supplier ID']=into.ID;});
+      ['Website','Username','Sample Dept Email'].forEach(h=>{if(!into[h]&&from[h])into[h]=from[h];});
+      if(from.Notes&&(into.Notes||'').indexOf(from.Notes)===-1)into.Notes=into.Notes?into.Notes+' · '+from.Notes:from.Notes;
+      into.Tags=parseTags((into.Tags||'')+','+(from.Tags||'')).join(', ');
+      DB.suppliers=DB.suppliers.filter(s=>s.ID!==from.ID);
+      if(tFilter.sup===from.ID)tFilter.sup=into.ID;if(pFilter.sup===from.ID)pFilter.sup=into.ID;if(rState.sup===from.ID)rState.sup=into.ID;
+      index();refreshFilters();
+      persist([{action:'mergeSupplier',payload:{from:from.ID,into:into.ID}}],'Merged into '+into.Name);
+      editSupId=null;closeOv('ov-supplier',{force:true});
+      if(isOpen('ov-project'))renderProjectModal();
+      if(isOpen('ov-history')&&histSup===from.ID){histSup=into.ID;renderHistory();}
+    });
+}
 function syncRepDraft(){
   repDraft.forEach((r,i)=>{r.Name=val('rf-name-'+i);r['Product Line']=val('rf-pl-'+i);r.Email=val('rf-email-'+i);r.Phone=val('rf-phone-'+i);r.Notes=val('rf-notes-'+i);});
 }
 function addRepDraft(){syncRepDraft();repDraft.push(blankRep());renderSupplierModal();}
+/* Removing a rep waits for Save like every other edit here — closing
+   without saving keeps them. */
 function removeRepDraft(i){
   syncRepDraft();
   const r=repDraft[i];
-  if(r.ID&&!r._new){if(!confirm('Remove this rep from the supplier?'))return;removeThing('rep',r.ID);}
+  if(r.ID&&!r._new)repRemoved.push(r.ID);
   repDraft.splice(i,1);if(!repDraft.length)repDraft.push(blankRep());
   renderSupplierModal();
 }
-function submitSupplier(){
+/* The supplier, removed reps and changed reps go as one request. A rep
+   that didn't change isn't sent at all. */
+function submitSupplier(anyway){
   const s=readSupForm();
   if(!s.Name){toast('The supplier needs a name',true);return;}
+  if(!editSupId&&!anyway){
+    const hits=similarSuppliers(s.Name);
+    if(hits.length){
+      ask({title:'Add a new supplier?',text:'“'+s.Name+'” looks like '+hits.map(x=>'“'+x.Name+'”').join(' and ')+', already on the list.',
+        ok:'Add anyway',cancel:'Go back'}).then(ok=>{if(ok)submitSupplier(true);});
+      return;
+    }
+  }
   syncRepDraft();
-  if(editSupId){Object.assign(SUP[editSupId],s);saveSupplier(SUP[editSupId],'Supplier saved');}
-  else{const sup={ID:newId('S'),...s,Created:today()};editSupId=sup.ID;saveSupplier(sup,'Supplier added');}
+  const from=supFrom,isNew=!editSupId,ops=[];
+  let sid=editSupId;
+  if(sid){const cur=SUP[sid],b={...cur};Object.assign(cur,s);ops.push(opSave('supplier',cur,b));}
+  else{const sup={ID:newId('S'),...s,Created:today()};sid=sup.ID;ops.push(opSave('supplier',sup));}
+  repRemoved.forEach(id=>ops.push(opDelete('rep',id)));
   repDraft.forEach(r=>{
     if(!(r.Name||r.Email||r.Phone))return;
-    if(r._new||!r.ID){r.ID=newId('R');delete r._new;r['Supplier ID']=editSupId;DB.reps.push(r);index();persist('saveRep',r);}
-    else{r['Supplier ID']=editSupId;saveRep(r);}
+    if(r._new||!r.ID)r.ID=newId('R');
+    delete r._new;r['Supplier ID']=sid;
+    ops.push(opSave('rep',r));
   });
-  closeOv('ov-supplier');
-  if(document.getElementById('ov-project').classList.contains('open'))renderProjectModal();
+  editSupId=sid;
+  commit(ops,isNew?'Supplier added':'Supplier saved');
+  refreshFilters();
+  closeOv('ov-supplier',{force:true});
+  afterSupplierSaved(sid,isNew,from);
 }
+/* back in whichever form was open: the supplier list is current, and a
+   supplier added from a form is chosen in it */
+function afterSupplierSaved(sid,isNew,from){
+  if(isOpen('ov-project'))renderProjectModal();
+  ['al','np1'].forEach(p=>{
+    const sel=document.getElementById(p+'-sup');if(!sel)return;
+    const cur=sel.value;sel.innerHTML=supplierOptions();sel.value=SUP[cur]?cur:'';
+  });
+  if(isNew&&from)selectSupplierIn(from,sid);
+}
+
+/* ============================ windows ============================== */
+/* Open windows stack. Esc, ✕ and the phone's Back button close the TOP
+   one only, and each asks before throwing away unsaved typing. Every
+   window owns one history entry, so Android's Back closes it rather
+   than the whole app. The in-app dialog (ask) owns none: Back just
+   cancels it. */
+let ovStack=[], ovReturn={}, ovOwnsEntry={}, skipPop=0;
+function openOv(id,mode){
+  const el=document.getElementById(id);
+  if(el.classList.contains('open'))return;
+  ovReturn[id]=document.activeElement;
+  el.classList.add('open');
+  ovStack.push(id);
+  ovOwnsEntry[id]=mode!=='none';
+  if(mode==='replace')history.replaceState({ov:id,view},'');
+  else if(mode!=='none')history.pushState({ov:id,view},'');
+  const m=el.querySelector('.modal');
+  if(m){const t=m.querySelector('h2');m.setAttribute('aria-label',t?t.textContent:'');if(mode!=='none')m.focus({preventScroll:true});}
+}
+function topOv(){return ovStack[ovStack.length-1]||null;}
+/* What a window would lose if closed now, in words — '' if nothing. */
+function dirtyMsg(id){
+  if(id==='ov-project')return projDirty();
+  if(id==='ov-new')return newProjDirty();
+  if(id==='ov-supplier')return supDirty();
+  if(id==='ov-history')return editorDirty()?'Your edits to this sample haven’t been saved.':'';
+  return '';
+}
+/* Closes one window; resolves true if it closed. opts: force (don't
+   ask), fromPop (Back already used up its history entry), keepEntry
+   (the entry is handed to the next window — see submitNewProject). */
+function closeOv(id,opts){
+  opts=opts||{};
+  const el=document.getElementById(id);
+  if(!el.classList.contains('open'))return Promise.resolve(true);
+  const d=opts.force?'':dirtyMsg(id);
+  const go=()=>{
+    el.classList.remove('open');
+    ovStack=ovStack.filter(x=>x!==id);
+    if(ovOwnsEntry[id]&&!opts.fromPop&&!opts.keepEntry){skipPop++;history.back();}
+    ovOwnsEntry[id]=false;
+    onClosed(id);
+    const r=ovReturn[id];ovReturn[id]=null;
+    if(r&&r.focus&&document.contains(r))r.focus({preventScroll:true});
+    return true;
+  };
+  if(!d)return Promise.resolve(go());
+  if(opts.fromPop)history.pushState({ov:id,view},'');   /* Back took the entry; put it back while we ask */
+  return ask({title:'Discard changes?',text:d,ok:'Discard',danger:true,cancel:'Keep editing'})
+    .then(ok=>{if(!ok)return false;opts.fromPop=false;return go();});
+}
+function onClosed(id){
+  if(id==='ov-dlg')return;
+  if(id==='ov-project'){editLineId=null;prefillLine=null;stickyLine=null;projEditOpen=false;}
+  if(id==='ov-history'){histSup=null;editLineId=null;}
+  if(id==='ov-acc')accCtx=null;
+  if(id==='ov-supplier')supFrom=null;
+  render();
+}
+/* In-app confirm / prompt / alert. o: {title, text, ok, cancel (false
+   for none), alt (a third choice), danger, input:{value, label}}.
+   Resolves true on OK — or the typed text, with an input — 'alt' for
+   the alt button, and false (null with an input) on Cancel, ✕, Esc or
+   Back. */
+let dlgResolve=null, dlgHasInput=false, dlgState=null;
+function ask(o){
+  return new Promise(res=>{
+    if(dlgResolve)dlgDone(false);
+    dlgResolve=res;dlgHasInput=!!o.input;dlgState=history.state;
+    document.getElementById('md-dlg').innerHTML=
+      '<button class="close" aria-label="Close" onclick="dlgDone(false)">'+ic('x')+'</button>'+
+      '<h2>'+esc(o.title)+'</h2>'+
+      (o.text?'<p class="dlgtext">'+esc(o.text)+'</p>':'')+
+      (o.input?'<label for="dlg-in">'+esc(o.input.label||'')+'</label><input id="dlg-in" value="'+esc(o.input.value||'')+'">':'')+
+      '<div class="dlgfoot"><button class="btn'+(o.danger?' bad':'')+'" id="dlg-ok" onclick="dlgDone(true)">'+esc(o.ok||'OK')+'</button>'+
+      (o.alt?'<button class="btn ghost" onclick="dlgDone(\'alt\')">'+esc(o.alt)+'</button>':'')+
+      (o.cancel===false?'':'<button class="btn ghost" onclick="dlgDone(false)">'+esc(o.cancel||'Cancel')+'</button>')+'</div>';
+    openOv('ov-dlg','none');
+    const inp=document.getElementById('dlg-in');
+    if(inp){inp.focus();inp.select();inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();dlgDone(true);}});}
+    else document.getElementById('dlg-ok').focus();
+  });
+}
+function dlgDone(v){
+  const inp=document.getElementById('dlg-in');
+  const out=v===true?(inp?inp.value:true):(v==='alt'?'alt':(dlgHasInput?null:false));
+  const r=dlgResolve;dlgResolve=null;
+  closeOv('ov-dlg',{force:true});
+  if(r)r(out);
+}
+window.addEventListener('popstate',e=>{
+  if(skipPop>0){skipPop--;return;}
+  const top=topOv();
+  if(top==='ov-dlg'){history.pushState(dlgState,'');dlgDone(false);return;}
+  if(top){closeOv(top,{fromPop:true});return;}
+  const st=e.state||{};
+  rState.sup=st.sup||null;
+  show(st.view||'today',true);
+});
+/* keep Tab inside the top window */
+function trapTab(e,top){
+  const m=document.querySelector('#'+top+' .modal');if(!m)return;
+  const f=[...m.querySelectorAll('button,input,select,textarea,a[href],summary,[tabindex="0"]')].filter(x=>!x.disabled&&x.getClientRects().length);
+  if(!f.length)return;
+  const a=document.activeElement,first=f[0],last=f[f.length-1];
+  if(!m.contains(a)){e.preventDefault();first.focus();}
+  else if(e.shiftKey&&(a===first||a===m)){e.preventDefault();last.focus();}
+  else if(!e.shiftKey&&a===last){e.preventDefault();first.focus();}
+}
+document.addEventListener('keydown',e=>{
+  const top=topOv();
+  if(e.key==='Escape'&&top){e.preventDefault();if(top==='ov-dlg')dlgDone(false);else closeOv(top);return;}
+  if(e.key==='Tab'&&top){trapTab(e,top);return;}
+  /* Enter / Space on a div that plays a button (project cards) */
+  if((e.key==='Enter'||e.key===' ')&&e.target.getAttribute&&e.target.getAttribute('role')==='button'){e.preventDefault();e.target.click();}
+});
 
 /* ========================= auto refresh ============================ */
 /* Pulls fresh data in the background. Never shows the loader, never
    steals what you are doing — if you are mid-anything it waits. */
 
 function refreshBlocked(){
-  if(syncing || pendingSaves>0)                       return 'save in flight';
-  if(document.querySelector('.overlay.open'))         return 'modal open';
-  if(document.getElementById('proj-edit') && document.getElementById('proj-edit').style.display!=='none') return 'editing';
+  if(syncing || refreshing || pendingSaves>0)         return 'save in flight';
+  if(ovStack.length)                                  return 'modal open';
   const a=document.activeElement;
   if(a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return 'typing';
   if(document.hidden)                                  return 'tab hidden';
@@ -1540,33 +2252,78 @@ function scheduleRefresh(ms){
 
 function autoRefresh(){
   if(refreshBlocked()){scheduleRefresh(AUTO_RETRY_MS);return;}
-  silentRefresh().finally(()=>scheduleRefresh());
+  silentRefresh().then(r=>scheduleRefresh(r===false?AUTO_RETRY_MS:null));
 }
 
+/* Resolves true if applied, false if thrown away, null if it failed.
+   Thrown away when anything was saved (or a window opened) while it
+   was in flight: the data predates that change, and laying it over the
+   screen would visibly undo it. */
 function silentRefresh(){
   syncing=true;
-  const y=window.scrollY;
+  const gen=saveGen,y=window.scrollY;
   return apiGet().then(data=>{
-    if(refreshBlocked()==='modal open')return;      /* opened one mid-flight */
-    DB=data;index();refreshFilters();render();
+    if(saveGen!==gen||pendingSaves>0||ovStack.length)return false;
+    useData(data);render();
     window.scrollTo({top:y});
-    lastSync=new Date();stampSync();
-  }).catch(()=>{ /* offline / hiccup — silent, we just try again next cycle */ })
+    return true;
+  }).catch(()=>null)                /* offline / hiccup — silent, we just try again next cycle */
     .finally(()=>{syncing=false;});
 }
 
+/* The refresh buttons, and the reload after a failed save. No loader —
+   the button spins — and open windows are redrawn in place, keeping
+   anything typed in them. quiet: no "refreshed" message (a failed
+   save's message is still showing). */
+function refreshNow(opts){
+  opts=opts||{};
+  if(refreshing)return;
+  if(pendingSaves>0){if(opts.quiet)reloadAfterSaves=true;else toast('Still saving — try again in a moment');return;}
+  refreshing=true;setBusy(true);
+  const gen=saveGen,y=window.scrollY;
+  let again=false;
+  apiGet().then(data=>{
+    if(saveGen!==gen){again=true;return;}
+    useData(data);redraw();
+    window.scrollTo({top:y});
+    if(!opts.quiet)toast('Data refreshed');
+    scheduleRefresh();
+  }).catch(e=>{
+    if(!opts.quiet)toast('Couldn’t reach the sheet — '+e.message,{err:true});
+    scheduleRefresh(AUTO_RETRY_MS);
+  }).finally(()=>{
+    refreshing=false;setBusy(false);
+    if(again){if(pendingSaves)reloadAfterSaves=true;else refreshNow({quiet:true});}
+  });
+}
+function setBusy(on){document.querySelectorAll('.refreshbtn').forEach(b=>{b.classList.toggle('busy',on);b.disabled=on;});}
+
+/* Takes a dataset as the one to work from. cachedAt: it came from this
+   device's saved copy (so its "today" is stale, and it's labelled as a
+   saved copy). A fresh one is saved as the copy for next time. */
+function useData(data,cachedAt){
+  DB=data;
+  CFG={...CFG_DEFAULT,...(DB.config||{})};
+  if(cachedAt){DB.today=localDay();lastSync=new Date(cachedAt);lastSyncCached=true;}
+  else{lastSync=new Date();lastSyncCached=false;saveCache(data);}
+  index();refreshFilters();stampSync();
+}
+function saveCache(data){try{localStorage.setItem(CACHE_KEY,JSON.stringify({at:Date.now(),data}));}catch(e){}}
+function loadCache(){try{const c=JSON.parse(localStorage.getItem(CACHE_KEY)||'null');return c&&c.at&&c.data&&c.data.lines?c:null;}catch(e){return null;}}
+
+function syncWhen(d){
+  const t=d.toLocaleTimeString('en-CA',{hour:'numeric',minute:'2-digit'});
+  return localDay(d)===localDay()?t:nice(localDay(d))+', '+t;
+}
 function stampSync(){
-  const el=document.getElementById('synced');
-  if(!el)return;
-  el.textContent=lastSync
-    ? 'Updated '+lastSync.toLocaleTimeString('en-CA',{hour:'numeric',minute:'2-digit'})
-    : '';
+  const txt=lastSync?(lastSyncCached?'Saved copy · ':'Updated ')+syncWhen(lastSync):'';
+  document.querySelectorAll('.synced').forEach(el=>{el.textContent=txt;});
 }
 
 /* Coming back to the tab: if the data is stale, refresh right away. */
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden||!AUTO_REFRESH_MS)return;
-  if(lastSync && (Date.now()-lastSync.getTime())<AUTO_REFRESH_MS)return;
+  if(lastSync && !lastSyncCached && (Date.now()-lastSync.getTime())<AUTO_REFRESH_MS)return;
   autoRefresh();
 });
 
@@ -1575,19 +2332,17 @@ document.addEventListener('visibilitychange',()=>{
    editable in place. This is the record that drives the speed and
    accuracy badges — fix it here and the scoring corrects itself. */
 
-let histSup=null, histFilter={q:'',status:''}, histEditId=null;
+let histSup=null, histFilter={q:'',status:''};
 const ACCURACY_OPTS=['','Correct','Incomplete','Wrong item'];
 
 function openHistory(sid){
-  histSup=sid; histFilter={q:'',status:''}; histEditId=null;
+  histSup=sid; histFilter={q:'',status:''}; editLineId=null;
+  document.getElementById('md-history').innerHTML='';
   renderHistory();
-  document.getElementById('ov-history').classList.add('open');
+  document.getElementById('md-history').scrollTop=0;document.getElementById('ov-history').scrollTop=0;
+  openOv('ov-history');
 }
-function closeHistory(){
-  document.getElementById('ov-history').classList.remove('open');
-  histSup=null; histEditId=null;
-  render();
-}
+function closeHistory(){closeOv('ov-history');}
 function histLines(){
   let ls=DB.lines.filter(l=>l['Supplier ID']===histSup);
   if(histFilter.status==='Problems')      ls=ls.filter(l=>l.Accuracy&&l.Accuracy!=='Correct');
@@ -1608,11 +2363,12 @@ function histSetStatus(v){histFilter.status=v;renderHistory();}
 
 function renderHistory(keepFocus){
   if(!histSup)return;
+  const keep=grabFields('md-history',dropNext);dropNext=[];
   const s=SUP[histSup]||{Name:'Unknown supplier'};
   const st=supStats(histSup);
   const ls=histLines();
 
-  let h='<button class="close" onclick="closeHistory()">'+ic('x')+'</button>'+
+  let h='<button class="close" aria-label="Close" onclick="closeHistory()">'+ic('x')+'</button>'+
     '<h2>'+esc(s.Name)+' <span class="subtle" style="font-weight:400">— order history</span></h2>'+
     '<p class="subtle" style="margin-top:4px">'+
       (st.total?('Ordered '+st.first.slice(0,4)+(st.first.slice(0,4)!==st.last.slice(0,4)?'–'+st.last.slice(0,4):'')+
@@ -1633,13 +2389,11 @@ function renderHistory(keepFocus){
       ' <b>silently absent from the median</b> — not excluded, just unmeasurable. Filter to <b>Unmeasured</b> to fill the gaps.</div>';
   }
 
-  h+='<div class="hint">Excluding a sample keeps it on its project but stops it moving these numbers. Use it when the record is real but the timing is garbage — a sample that sat in the warehouse a week before anyone marked it arrived measures our receiving, not the supplier.</div>';
-
   /* filters */
   h+='<div class="toolbar" style="margin-top:14px">'+
     '<div class="searchwrap">'+ic('search')+
-    '<input id="hf-q" placeholder="Search product, SKU, project, rep…" value="'+esc(histFilter.q)+'" oninput="histSetQ(this.value)"></div>'+
-    '<select onchange="histSetStatus(this.value)">'+
+    '<input type="search" id="hf-q" aria-label="Search this supplier’s samples" placeholder="Search product, SKU, project, rep…" value="'+esc(histFilter.q)+'" oninput="histSetQ(this.value)"></div>'+
+    '<select aria-label="Show" onchange="histSetStatus(this.value)">'+
       ['','Ordered','Arrived','Delivered','Overdue','Problems','Excluded','Unmeasured']
         .map(v=>'<option value="'+v+'"'+(histFilter.status===v?' selected':'')+'>'+(v||'All samples')+'</option>').join('')+
     '</select></div>';
@@ -1648,9 +2402,10 @@ function renderHistory(keepFocus){
     h+='<div class="empty">'+(st.total?'<b>No samples match that filter.</b>':'<b>No history yet.</b> Once you order samples from '+esc(s.Name)+', they show up here.')+'</div>';
   }else{
     h+='<div class="subtle" style="margin-bottom:8px">'+ls.length+' of '+st.total+' shown · newest first</div>';
-    ls.forEach(l=>{h+=(histEditId===l.ID)?histEditor(l):histRow(l);});
+    ls.forEach(l=>{h+=(editLineId===l.ID)?lineEditor(l):histRow(l);});
   }
   document.getElementById('md-history').innerHTML=h;
+  putFields(keep);
 
   if(keepFocus){
     const q=document.getElementById('hf-q');
@@ -1669,6 +2424,7 @@ function histRow(l){
   if(l['Date Arrived'])   dates+=' → arrived '+nice(l['Date Arrived'])+(lead!=null?' ('+lead+'d)':'');
   else if(l['Expected Arrival']) dates+=' → expected '+nice(l['Expected Arrival']);
   if(l['Date Delivered']) dates+=' → handed off '+nice(l['Date Delivered']);
+  const late=!od||ex?'':(l['Expected Arrival']?dDiff(l['Expected Arrival'],today())+'d late':'no ETA · '+dDiff(l['Date Ordered'],today())+'d');
 
   return '<div class="rowcard s-'+esc(l.Status)+(od&&!ex?' overdue':'')+(ex?' excluded':'')+'">'+
     '<div class="grow">'+sampleTitle(l)+
@@ -1679,120 +2435,38 @@ function histRow(l){
       (unmeasured?'<div class="meta exwhy warn">Missing a date — not counted toward the median</div>':'')+
       (l.Notes?'<div class="meta subtle">'+esc(l.Notes)+'</div>':'')+
     '</div>'+
-    (od&&!ex?'<span class="pill late">'+dDiff(l['Expected Arrival'],today())+'d late</span>':'')+
+    (late?'<span class="pill late">'+late+'</span>':'')+
     (ex?'<span class="pill neutral">excluded</span>':'')+
     (l.Accuracy?'<span class="pill '+(l.Accuracy==='Correct'?'Arrived':'warn')+(ex?' faded':'')+'">'+esc(l.Accuracy)+'</span>'
                :(ex?'':'<span class="pill neutral">unrated</span>'))+
     '<span class="pill '+esc(l.Status)+'">'+esc(l.Status)+'</span>'+
     (ex?'<button class="btn sm good" onclick="histInclude(\''+l.ID+'\')" title="Count this sample again">'+ic('check')+' Re-include</button>'
        :'<button class="btn sm ghost" onclick="histExclude(\''+l.ID+'\')" title="Stop this sample affecting the scores">'+ic('half')+' Exclude</button>')+
-    '<button class="btn sm ghost" onclick="histEdit(\''+l.ID+'\')">'+ic('edit')+' Edit</button>'+
+    '<button class="btn sm ghost" onclick="editLine(\''+l.ID+'\')">'+ic('edit')+' Edit</button>'+
     '</div>';
 }
 
 /* one-click exclude, so fixing a distorted average doesn't mean
-   opening the full editor on every bad row */
+   opening the full editor on every bad row. What Exclude is for is
+   explained here, where it's being used, not on every visit. */
 function histExclude(id){
   const l=DB.lines.find(x=>x.ID===id); if(!l)return;
-  const why=prompt('Why should this sample stop counting toward '+((SUP[l['Supplier ID']]||{}).Name||'this supplier')+'\u2019s scores?\n\nThe reason is stored on the record.','Late receiving on our end — not the supplier');
-  if(why===null)return;
-  l.Exclude=(why.trim()||'Excluded — no reason given');
-  saveLine(l,'Excluded from scoring');
-  renderHistory();
+  const sn=(SUP[l['Supplier ID']]||{}).Name||'this supplier';
+  ask({title:'Stop counting this sample?',
+    text:'It stays on its project, but stops moving '+sn+'’s speed and accuracy numbers. Use it when the record is real but the timing isn’t the supplier’s doing — a sample that sat in the warehouse a week before anyone marked it arrived measures our receiving, not the supplier.',
+    input:{label:'Reason (kept on the record)',value:'Late receiving on our end — not the supplier'},ok:'Exclude'}).then(why=>{
+      if(why===null)return;
+      const b={...l};
+      l.Exclude=(why.trim()||'Excluded — no reason given');
+      saveLine(l,'Excluded from scoring',b);
+      renderHistory();
+    });
 }
 function histInclude(id){
   const l=DB.lines.find(x=>x.ID===id); if(!l)return;
+  const b={...l};
   l.Exclude='';
-  saveLine(l,'Counting again');
-  renderHistory();
-}
-
-function histEditor(l){
-  const projOpts=[...DB.projects].sort((a,b)=>(a['Project Name']||'').localeCompare(b['Project Name']||''))
-    .map(p=>'<option value="'+p.ID+'"'+(l['Project ID']===p.ID?' selected':'')+'>'+esc(p['Project Name'])+'</option>').join('');
-  const supOpts=[...DB.suppliers].sort((a,b)=>a.Name.localeCompare(b.Name))
-    .map(s=>'<option value="'+s.ID+'"'+(l['Supplier ID']===s.ID?' selected':'')+'>'+esc(s.Name)+'</option>').join('');
-  const repOpts='<option value="">—</option>'+(REPSBYSUP[l['Supplier ID']]||[])
-    .map(r=>'<option value="'+r.ID+'"'+(l['Rep ID']===r.ID?' selected':'')+'>'+esc(r.Name||r.Email)+'</option>').join('');
-  const statOpts=['Ordered','Arrived','Delivered']
-    .map(v=>'<option'+(l.Status===v?' selected':'')+'>'+v+'</option>').join('');
-  const accOpts=ACCURACY_OPTS
-    .map(v=>'<option value="'+v+'"'+(l.Accuracy===v?' selected':'')+'>'+(v||'Not rated')+'</option>').join('');
-
-  return '<div class="linecard histedit">'+
-    '<div class="fields">'+
-      '<div><label>Product</label><input id="he-prod" value="'+esc(l.Product)+'"></div>'+
-      '<div><label>SKU / colour</label><input id="he-sku" value="'+esc(l.SKU)+'"></div>'+
-      '<div><label>Project</label><select id="he-proj">'+projOpts+'</select></div>'+
-      '<div><label>Supplier</label><select id="he-sup">'+supOpts+'</select></div>'+
-      '<div><label for="he-mfr">Manufacturer</label><input id="he-mfr" list="he-mfr-list" value="'+esc(l.Manufacturer)+'">'+
-        '<datalist id="he-mfr-list">'+nameOptions(knownNames(l['Supplier ID']))+'</datalist></div>'+
-      '<div><label>Rep</label><select id="he-rep">'+repOpts+'</select></div>'+
-      '<div><label>Status</label><select id="he-stat">'+statOpts+'</select></div>'+
-      '<div><label>Date ordered</label><input type="date" id="he-ord" value="'+esc(l['Date Ordered'])+'"></div>'+
-      '<div><label>Expected arrival</label><input type="date" id="he-eta" value="'+esc(l['Expected Arrival'])+'"></div>'+
-      '<div><label>Date arrived</label><input type="date" id="he-arr" value="'+esc(l['Date Arrived'])+'"></div>'+
-      '<div><label>Date handed off</label><input type="date" id="he-del" value="'+esc(l['Date Delivered'])+'"></div>'+
-      '<div><label>Accuracy</label><select id="he-acc">'+accOpts+'</select></div>'+
-    '</div>'+
-    '<label>Notes</label><input id="he-notes" value="'+esc(l.Notes)+'">'+
-    '<label>Exclude from scoring <span class="subtle">— leave blank to count normally; any text here removes it from the median and accuracy</span></label>'+
-    '<input id="he-ex" placeholder="e.g. late receiving on our end" value="'+esc(exReason(l))+'">'+
-    '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+
-      '<button class="btn sm" onclick="histSave()">'+ic('check')+' Save</button>'+
-      '<button class="btn sm ghost" onclick="histEditId=null;renderHistory()">Cancel</button>'+
-      '<span style="flex:1"></span>'+
-      '<button class="btn sm danger" onclick="histDelete(\''+l.ID+'\')">'+ic('trash')+' Delete sample</button>'+
-    '</div></div>';
-}
-
-function histEdit(id){histEditId=id;renderHistory();}
-
-function histSave(){
-  const l=DB.lines.find(x=>x.ID===histEditId);
-  if(!l){histEditId=null;renderHistory();return;}
-
-  const prod=val('he-prod');
-  if(!prod){toast('Give the sample a product name',true);return;}
-
-  const stat=document.getElementById('he-stat').value;
-  const ord =document.getElementById('he-ord').value;
-  let   arr =document.getElementById('he-arr').value;
-  let   del =document.getElementById('he-del').value;
-
-  /* keep status and dates from contradicting each other */
-  if(stat==='Ordered'){arr='';del='';}
-  if(stat==='Arrived'){del='';if(!arr)arr=today();}
-  if(stat==='Delivered'){if(!arr)arr=ord||today();if(!del)del=today();}
-  if(ord&&arr&&arr<ord){toast('Arrival cannot be before the order date',true);return;}
-  if(arr&&del&&del<arr){toast('Hand-off cannot be before arrival',true);return;}
-
-  l.Product=prod;
-  l.Manufacturer=val('he-mfr');
-  l.SKU=val('he-sku');
-  l['Project ID']=document.getElementById('he-proj').value;
-  l['Supplier ID']=document.getElementById('he-sup').value;
-  l['Rep ID']=document.getElementById('he-rep').value;
-  l.Status=stat;
-  l['Date Ordered']=ord;
-  l['Expected Arrival']=document.getElementById('he-eta').value;
-  l['Date Arrived']=arr;
-  l['Date Delivered']=del;
-  l.Accuracy=stat==='Ordered'?'':document.getElementById('he-acc').value;
-  l.Notes=val('he-notes');
-  l.Exclude=val('he-ex');
-
-  histEditId=null;
-  saveLine(l,'Sample updated');
-  renderHistory();
-}
-
-function histDelete(id){
-  const l=DB.lines.find(x=>x.ID===id);
-  if(!l)return;
-  if(!confirm('Delete "'+(l.Product||'this sample')+'" permanently? It disappears from its project and from this supplier\'s scoring.'))return;
-  histEditId=null;
-  removeThing('line',id,'Sample deleted');
+  saveLine(l,'Counting again',b);
   renderHistory();
 }
 
@@ -1839,32 +2513,42 @@ function loadingLine(){
   lastLoadLine=i;
   return LOADING_LINES[i];
 }
-function boot(isReload){
-  /* rebuilt every boot: picks a fresh line, and restores the spinner
-     after a failed load left its error markup in here */
+/* With a saved copy on this device the app draws from it at once and
+   fetches in the background; without one, the loader shows until the
+   data arrives. */
+function boot(){
   const ld=document.getElementById('loader');
-  ld.innerHTML='<div class="spin"></div><div class="loadmsg">'+esc(loadingLine())+'</div>';
-  if(isReload)ld.style.display='flex';
   if(API_URL.indexOf('PASTE_')===0){
     ld.innerHTML='<div class="empty" style="max-width:420px"><b>Almost there.</b><br>Open index.html and paste your Apps Script /exec URL and token into the CONFIGURE ME block at the top of the script.</div>';
     return;
   }
+  history.replaceState({view},'');
+  const c=loadCache();
+  if(c){useData(c.data,c.at);ld.style.display='none';render();}
+  else{
+    /* rebuilt every boot: picks a fresh line, and restores the spinner
+       after a failed load left its error markup in here */
+    ld.innerHTML='<div class="spin"></div><div class="loadmsg">'+esc(loadingLine())+'</div>';
+    ld.style.display='flex';
+  }
+  const gen=saveGen;
+  syncing=true;
   apiGet().then(data=>{
-    DB=data;index();refreshFilters();
-    ld.style.display='none';
-    render();
-    lastSync=new Date();stampSync();
+    /* already working from the saved copy — don't pull the rug out */
+    if(c&&(saveGen!==gen||ovStack.length)){scheduleRefresh(AUTO_RETRY_MS);return;}
+    const y=window.scrollY;
+    useData(data);ld.style.display='none';render();
+    if(c)window.scrollTo({top:y});
     scheduleRefresh();
-    if(isReload)toast('Data refreshed');
   }).catch(e=>{
+    if(c){
+      toast('Can’t reach the sheet — showing the copy saved '+syncWhen(new Date(c.at)),{err:true,ms:6000});
+      scheduleRefresh(AUTO_RETRY_MS);return;
+    }
     /* plain on purpose — a joke here reads as flippant about a real problem */
-    ld.innerHTML='<div class="empty" style="max-width:420px">Could not load data — '+esc(e.message)+'<br><br><button class="btn" onclick="boot(true)">Try again</button></div>';
-  });
+    ld.innerHTML='<div class="empty" style="max-width:420px">Could not load data — '+esc(e.message)+'<br><br><button class="btn" onclick="boot()">Try again</button></div>';
+  }).finally(()=>{syncing=false;});
 }
-/* Esc closes any open modal */
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape')document.querySelectorAll('.overlay.open').forEach(o=>closeOv(o.id));
-});
 boot();
 </script>
 </body>
