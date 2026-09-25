@@ -1177,8 +1177,9 @@ function addLineForm(idp){
       [...DB.suppliers].sort((a,b)=>a.Name.localeCompare(b.Name)).map(s=>'<option value="'+s.ID+'">'+esc(s.Name)+'</option>').join('')+'</select>'+
       '<div class="subtle" style="margin-top:3px"><a href="#" onclick="openSupplier(null);return false">+ new supplier</a></div></div>'+
     '<div><label>Rep</label><select id="'+idp+'-rep"><option value="">—</option></select></div>'+
-    '<div><label for="'+idp+'-mfr">Manufacturer</label><input id="'+idp+'-mfr" list="'+idp+'-mfr-list" placeholder="e.g. Altro">'+
-      '<datalist id="'+idp+'-mfr-list">'+nameOptions(knownNames(''))+'</datalist></div>'+
+    '<div><label for="'+idp+'-mfr">Manufacturer</label><input id="'+idp+'-mfr" list="'+idp+'-mfr-list" placeholder="e.g. Altro" oninput="carryHint(\''+idp+'\')">'+
+      '<datalist id="'+idp+'-mfr-list">'+nameOptions(knownNames(''))+'</datalist>'+
+      '<div class="subtle" id="'+idp+'-carry" aria-live="polite" style="margin-top:3px"></div></div>'+
     '<div><label>Product</label><input id="'+idp+'-prod" placeholder="e.g. Quiet Cover LVT"></div>'+
     '<div><label>SKU / colour</label><input id="'+idp+'-sku"></div>'+
     '<div><label>Date ordered</label><input type="date" id="'+idp+'-date" value="'+today()+'" onchange="lineSupChanged(\''+idp+'\')"></div>'+
@@ -1211,6 +1212,7 @@ function lineSupChanged(idp){
   const sid=document.getElementById(idp+'-sup').value;
   /* what this supplier carries moves to the top of the suggestions */
   document.getElementById(idp+'-mfr-list').innerHTML=nameOptions(knownNames(sid));
+  carryHint(idp);
   const repSel=document.getElementById(idp+'-rep');
   const rr=REPSBYSUP[sid]||[];
   repSel.innerHTML='<option value="">—</option>'+rr.map(r=>'<option value="'+r.ID+'">'+esc(r.Name||r.Email)+(r['Product Line']?' · '+esc(r['Product Line']):'')+'</option>').join('');
@@ -1223,6 +1225,21 @@ function lineSupChanged(idp){
     eta.innerHTML='Estimated arrival ~ <b>'+nice(addDays(od,st.median))+'</b> (median '+st.median+' days over '+st.leadCount+' orders'+(st.median>=SLOW?' — <b>this supplier runs slow</b>':'')+')';
   }else eta.textContent='No history with this supplier yet — arrival unknown until data builds.';
 }
+/* "Who do we order Altro through?" answered under the Manufacturer
+   field: every supplier whose tags list that name (exact match — the
+   autocomplete keeps spellings in line). Tapping one picks it. If the
+   chosen supplier already carries it, only the alternatives are named,
+   and nothing shows when it's the only one. */
+function carryHint(idp){
+  const el=document.getElementById(idp+'-carry');if(!el)return;
+  const m=document.getElementById(idp+'-mfr').value.trim().toLowerCase();
+  const sid=document.getElementById(idp+'-sup').value;
+  const who=m?DB.suppliers.filter(s=>supTags(s).some(t=>t.toLowerCase()===m)).sort((a,b)=>a.Name.localeCompare(b.Name)):[];
+  const others=who.filter(s=>s.ID!==sid);
+  el.innerHTML=others.length?(others.length<who.length?'Also carried by ':'Carried by ')+
+    others.map(s=>'<a href="#" onclick="pickCarrier(\''+idp+'\',\''+s.ID+'\');return false">'+esc(s.Name)+'</a>').join(' · '):'';
+}
+function pickCarrier(idp,sid){document.getElementById(idp+'-sup').value=sid;lineSupChanged(idp);}
 function readLineForm(idp){
   idp=idp||'al';
   const sid=document.getElementById(idp+'-sup').value;
@@ -1271,6 +1288,7 @@ function applyPrefill(){
   document.getElementById('al-prod').value=f.prod;document.getElementById('al-mfr').value=f.mfr;
   document.getElementById('al-sku').value=f.sku;
   document.getElementById('al-notes').value=f.notes;
+  carryHint('al');
 }
 
 /* new project modal */
